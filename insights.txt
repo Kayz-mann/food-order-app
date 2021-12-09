@@ -1,0 +1,7 @@
+config keeps all oout config files
+controller keeps all our business logic
+database shows the kind of request sent
+images stores images
+middleware handles request in order
+routes hnales endpoint
+services handles application proccessing
