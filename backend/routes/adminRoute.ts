@@ -3,7 +3,7 @@ import { createVendor, getVendor, getVendorById } from '../controllers/adminCont
 
 const router = express.Router();
 
-router.post('/admin', createVendor);
+router.post('/vendor', createVendor);
 router.get('/vendor', getVendor);
 router.post('/vendor/:id', getVendorById);
 
