@@ -14,7 +14,7 @@ export const FindVendor = async (id: string | undefined, email?: string) => {
 export const createVendor = async (req: Request, res: Response, next: NextFunction) => {
     const { name, address, pinCode, email, password, ownerName, phone } = <CreateVendorInput>req.body;
 
-    const existingVendor = await Vendor.findOne('', email);
+    const existingVendor = await FindVendor('', email);
     if (existingVendor !== null) {
         return res.json({ "message": "A vendor already exists with this email" })
     };
@@ -51,7 +51,7 @@ export const getVendors = async (req: Request, res: Response, next: NextFunction
 
 export const getVendorById = async (req: Request, res: Response, next: NextFunction) => {
     const vendorId = req.params.id;
-    const vendor = await Vendor.findById(vendorId);
+    const vendor = await FindVendor(vendorId);
 
     if (vendor !== null) {
         return res.json(vendor);
