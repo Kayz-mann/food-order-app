@@ -20,7 +20,7 @@ export const vendorLogin = async (req: Request, res: Response, next: NextFunctio
                 foodTypes: existingVendor.foodType,
                 name: existingVendor.name
             })
-            return res.json(existingVendor);
+            return res.json(signature);
         } else {
             return res.json({ "message": "Password is not valid" });
         }
@@ -38,3 +38,5 @@ export const updateVendorProfile = async (req: Request, res: Response, next: Nex
 export const updateVendorService = async (req: Request, res: Response, next: NextFunction) => {
     
 }
+
+// 18:04

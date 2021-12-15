@@ -37,7 +37,7 @@ export const createVendor = async (req: Request, res: Response, next: NextFuncti
         coverImages: [],
     });
 
-    return res.json({ createVendor });
+    return res.json(createVendor);
 
 };
 
