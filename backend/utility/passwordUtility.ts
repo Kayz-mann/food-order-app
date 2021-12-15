@@ -6,12 +6,12 @@ import { AuthPayload } from '../dto/auth.dto';
 import { VendorPayload } from '../dto/vendor.dto';
 
 
-declare module 'express' { 
-    export interface Request {
-        user: any
-        req: any
-    }
-  }
+// declare module 'express' { 
+//     export interface Request {
+//         user: any
+//         req: any
+//     }
+//   }
 
 export const GenerateSalt = async () => {
     return await bcrypt.genSalt();

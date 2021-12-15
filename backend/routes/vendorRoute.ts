@@ -1,12 +1,14 @@
 import express, { Request, Response, NextFunction } from 'express';
 import { getVendorProfile, updateVendorProfile, updateVendorService, vendorLogin } from '../controllers';
+import { Authenticate } from '../middlewares/commonAuth';
 
 
 
 const router = express.Router();
 
+router.use(Authenticate);
 router.post('/login', vendorLogin);
-router.get('/profile', getVendorProfile);
+router.get('/profile',  getVendorProfile);
 router.patch('/profile', updateVendorProfile);
 router.patch('/service', updateVendorService);
 

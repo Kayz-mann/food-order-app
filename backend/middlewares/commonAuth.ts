@@ -5,7 +5,7 @@ import { ValidateSignature } from "../utility";
 
 declare global {
     namespace Express {
-        interface Request{
+      export  interface Request{
             user?: AuthPayload
         }
     }
