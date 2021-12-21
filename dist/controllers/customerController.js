@@ -12,8 +12,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteCart = exports.getCart = exports.addToCart = exports.editCustomerProfile = exports.getCustomerProfile = exports.requestOtp = exports.customerVerify = exports.customerLogin = exports.customerSignUp = void 0;
 const class_transformer_1 = require("class-transformer");
 const class_validator_1 = require("class-validator");
-const customer_dto_1 = require("../../src/dto/customer.dto");
-const customer_1 = require("../../src/models/customer");
+const customer_dto_1 = require("../dto/customer.dto");
+const customer_1 = require("../models/customer");
 const utility_1 = require("../utility");
 const customerSignUp = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const customerInputs = (0, class_transformer_1.plainToClass)(customer_dto_1.CreateCustomerInputs, req.body);

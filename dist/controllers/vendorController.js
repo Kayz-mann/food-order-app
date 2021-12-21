@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getFoods = exports.addFood = exports.updateVendorService = exports.updateVendorCoverImage = exports.updateVendorProfile = exports.getVendorProfile = exports.vendorLogin = void 0;
 const adminController_1 = require("./adminController");
 const utility_1 = require("../utility");
-const food_1 = require("../../src/models/food");
+const models_1 = require("../models");
 const vendorLogin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password } = req.body;
     const existingVendor = yield (0, adminController_1.FindVendor)('', email);
@@ -100,7 +100,7 @@ const addFood = (req, res, next) => __awaiter(void 0, void 0, void 0, function* 
         if (vendor !== null) {
             const files = req.files;
             const images = files.map((file) => file.filename);
-            const createdFood = yield food_1.Food.create({
+            const createdFood = yield models_1.Food.create({
                 vendorId: vendor._id,
                 name: name,
                 description: description,
@@ -122,7 +122,7 @@ exports.addFood = addFood;
 const getFoods = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const user = req.user;
     if (user) {
-        const foods = yield food_1.Food.find({ vendorId: user._id });
+        const foods = yield models_1.Food.find({ vendorId: user._id });
         if (foods !== null) {
             return res.json(foods);
         }

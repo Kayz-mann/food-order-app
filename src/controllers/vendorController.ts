@@ -3,7 +3,7 @@ import { FindVendor } from './adminController';
 import { VendorLoginInputs, EditVendorInputs } from '../../src/dto/vendor.dto';
 import { GenerateSignature, ValidatePassword } from '../utility';
 import { CreateFoodInputs } from '../../src/dto/food.dto';
-import { Food } from '../../src/models/food';
+import { Food } from '../models';
 
 export const vendorLogin = async (req: Request, res: Response, next: NextFunction) => {
     const { email, password } = <VendorLoginInputs>req.body;

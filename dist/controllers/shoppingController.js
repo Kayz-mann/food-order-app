@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getRestaurantById = exports.searchFoods = exports.getFoodIn30Min = exports.getTopRestaurants = exports.getFoodAvailability = void 0;
-const models_1 = require("../../src/models");
+const models_1 = require("../models");
 const getFoodAvailability = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const pinCode = req.params.pinCode;
     const result = yield models_1.Vendor.find({ pincode: pinCode, serviceAvailable: false })

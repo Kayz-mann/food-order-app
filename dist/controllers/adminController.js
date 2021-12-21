@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getVendorById = exports.getVendors = exports.createVendor = exports.FindVendor = void 0;
-const models_1 = require("../../src/models");
+const models_1 = require("../models");
 const utility_1 = require("../utility");
 const FindVendor = (id, email) => __awaiter(void 0, void 0, void 0, function* () {
     if (email) {

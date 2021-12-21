@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction  } from "express";
-import { CreateVendorInput } from '../../src/dto/vendor.dto';
-import { Vendor } from "../../src/models";
+import { CreateVendorInput } from '../dto';
+import { Vendor } from "../models";
 import { GeneratePassword, GenerateSalt } from "../utility";
 
 export const FindVendor = async (id: string | undefined, email?: string) => {

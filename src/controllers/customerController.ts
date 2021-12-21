@@ -1,8 +1,8 @@
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import express, { Request, Response, NextFunction } from 'express';
-import { CreateCustomerInputs, EditCustomerProfileInputs, UserLoginInputs } from '../../src/dto/customer.dto';
-import { Customer } from '../../src/models/customer';
+import { CreateCustomerInputs, EditCustomerProfileInputs, UserLoginInputs } from '../dto/customer.dto';
+import { Customer } from '../models/customer';
 import { Food } from '../../src/models/food';
 import { GenerateOtp, GeneratePassword, GenerateSalt, GenerateSignature, onRequestOtp, ValidatePassword } from '../utility';
 
