@@ -1,5 +1,5 @@
 import express from 'express';
-import { addToCart, customerLogin, customerSignUp, customerVerify, deleteCart, editCustomerProfile, getCart, getCustomerProfile, requestOtp } from '../controllers';
+import { addToCart, createOrder, customerLogin, customerSignUp, customerVerify, deleteCart, editCustomerProfile, getCart, getCustomerProfile, getOrder, getOrderById, requestOtp } from '../controllers';
 import { authenticate } from '../middlewares/commonAuth';
 
 const router = express.Router();
@@ -32,6 +32,9 @@ router.get('/cart', getCart);
 router.delete('/cart', deleteCart);
 
 // Order
+router.post('/create-order', createOrder);
+router.get('/orders', getOrder);
+router.get('/order/:id', getOrderById);
 
 // Payment
 

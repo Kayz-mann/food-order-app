@@ -29,8 +29,8 @@ router.patch('/coverimage', images, updateVendorCoverImage);
 router.post('/food', images, addFood);
 router.get('/foods', getFoods);
 
-router.get('/', (req: Request, res: Response, next: NextFunction ) => {
-    res.json({ message: "Hello vendor"});
-})
+router.get('/', (req: Request, res: Response, next: NextFunction) => {
+    res.json({ message: "Hello vendor" });
+});
 
 export { router as vendorRoute };

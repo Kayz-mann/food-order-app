@@ -7,9 +7,9 @@ router.post('/vendor', createVendor);
 router.get('/vendor', getVendors);
 router.post('/vendor/:id', getVendorById);
 
-router.get('/', (req: Request, res: Response, next: NextFunction ) => {
-    res.json({ message: "Hello admin"});
-})
+router.get('/', (req: Request, res: Response, next: NextFunction) => {
+    res.json({ message: "Hello admin" });
+});
 
 
 export { router as adminRoute };
