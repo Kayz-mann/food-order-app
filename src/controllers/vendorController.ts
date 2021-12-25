@@ -4,6 +4,7 @@ import { VendorLoginInputs, EditVendorInputs } from '../../src/dto/vendor.dto';
 import { GenerateSignature, ValidatePassword } from '../utility';
 import { CreateFoodInputs } from '../../src/dto/food.dto';
 import { Food } from '../models';
+import { Order } from '../models/order';
 
 export const vendorLogin = async (req: Request, res: Response, next: NextFunction) => {
     const { email, password } = <VendorLoginInputs>req.body;
@@ -136,3 +137,51 @@ export const getFoods= async (req: Request, res: Response, next: NextFunction) =
     return res.json({"message": "Foods information not found"})
     
 }
+
+export const getCurrentOrders = async (req: Request, res: Response, next: NextFunction) => {
+    const user = req.user;
+
+    if (user) {
+        const orders = await Order.find({ vendorId: user._id }).populate('items.food');
+
+        if (orders != null) {
+            return res.status(200).json(orders);
+        }
+
+    }
+    return res.json({ "message": "order not found" });
+};
+
+export const getOrderDetails = async (req: Request, res: Response, next: NextFunction) => {
+    const orderId = req.params.id;
+
+    if (orderId) {
+        const order = await Order.findById(orderId).populate('items.food');
+
+        if (order != null) {
+            return res.status(200).json(order);
+        }
+    }
+    return res.json({ "message": "order not found" });
+};
+
+export const processOrder = async (req: Request, res: Response, next: NextFunction) => {
+    const orderId = req.params.id;
+    const { status, remarks, time } = req.body;
+
+    if (orderId) {
+        const order = await (await Order.findById(orderId)).populated('food');
+
+        order.Status = status;
+        order.remarks = remarks;
+        if (time) {
+            order.readyTime = time;
+        }
+
+        const orderResult = await order.save();
+        if (orderResult !== null) {
+            return res.status(200).json(orderResult);
+        }
+    }
+    return res.json({ "message": "Unable to process order" });
+};

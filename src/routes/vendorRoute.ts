@@ -1,7 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express';
 import multer from 'multer';
 
-import { addFood, getFoods, getVendorProfile, updateVendorCoverImage, updateVendorProfile, updateVendorService, vendorLogin } from '../controllers';
+import { addFood, getCurrentOrders, getFoods, getOrderDetails, getVendorProfile, processOrder, updateVendorCoverImage, updateVendorProfile, updateVendorService, vendorLogin } from '../controllers';
 import { authenticate } from '../middlewares/commonAuth';
 
 
@@ -29,8 +29,17 @@ router.patch('/coverimage', images, updateVendorCoverImage);
 router.post('/food', images, addFood);
 router.get('/foods', getFoods);
 
+// Orders
+router.get('/orders', getCurrentOrders);
+router.put('/order/:id/process', processOrder);
+router.get('/order/:id', getOrderDetails);
+
+
 router.get('/', (req: Request, res: Response, next: NextFunction) => {
     res.json({ message: "Hello vendor" });
 });
 
 export { router as vendorRoute };
+
+
+// 21:55
