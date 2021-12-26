@@ -1,10 +1,12 @@
 import { Request, Response, NextFunction } from 'express';
 import { FindVendor } from './adminController';
-import { VendorLoginInputs, EditVendorInputs } from '../../src/dto/vendor.dto';
+import { VendorLoginInputs, EditVendorInputs, CustomerOfferInputs } from '../../src/dto/vendor.dto';
 import { GenerateSignature, ValidatePassword } from '../utility';
 import { CreateFoodInputs } from '../../src/dto/food.dto';
 import { Food } from '../models';
 import { Order } from '../models/order';
+import { CreateCustomerInputs } from '../dto/customer.dto';
+import { Offer } from '../models/offer';
 
 export const vendorLogin = async (req: Request, res: Response, next: NextFunction) => {
     const { email, password } = <VendorLoginInputs>req.body;
@@ -184,4 +186,101 @@ export const processOrder = async (req: Request, res: Response, next: NextFuncti
         }
     }
     return res.json({ "message": "Unable to process order" });
+};
+
+
+export const getOffers = async (req: Request, res: Response, next: NextFunction) => {
+    const user = req.user;
+
+    if (user) {
+        let currentOffers = Array();
+
+        const offers = await Offer.find().populate('vendors');
+
+        if (offers) {
+            offers.map(item => {
+                if (item.vendors) {
+                    item.vendors.map(vendor => {
+                        if (vendor._id.toString() === user._id) {
+                           currentOffers.push(item)
+                       }
+                    })
+                    
+                    if (item.offerType === "GENERIC") {
+                        currentOffers.push(item);
+                    }
+               }
+           })
+        }
+        return res.json(currentOffers);
+    }
+    return res.json({ "message": "Offers not available" });
+};
+
+export const addOffer = async (req: Request, res: Response, next: NextFunction) => {
+    const user = req.user;
+
+    if (user) {
+        const { title, description, offerType, offerAmount, pinCode, promoCode, promoType, startValidity, endValidity,  bank, bins, minValue, isActive } = <CustomerOfferInputs>req.body;
+
+        const vendor = await FindVendor(user._id);
+
+        if (vendor) {
+            const offer = await Offer.create({
+                title,
+                description,
+                offerType,
+                pinCode,
+                promoCode,
+                promoType,
+                startValidity,
+                endValidity,
+                offerAmount,
+                bank,
+                bins,
+                isActive,
+                minValue,
+                vendors: [vendor]
+            })
+
+            console.log(offer);
+
+            return res.status(200).json(offer);
+        }
+    }
+    return res.json({ "message": "Unable to Add Offer" });
+};
+
+export const editOffer = async (req: Request, res: Response, next: NextFunction) => {
+    const user = req.user;
+    const offerId = req.params._id;
+
+    if (user) {
+        const { title, description, offerType, offerAmount, pinCode, promoCode, promoType, startValidity, endValidity, bank, bins, minValue, isActive } = <CustomerOfferInputs>req.body;
+        
+        const currentOffer = await Offer.findById(offerId);
+
+        if (currentOffer) {
+            const vendor = await FindVendor(user._id);
+
+            if (vendor) {
+                currentOffer.title = title,
+                currentOffer.description = description,
+                currentOffer.offerType = offerType,
+                currentOffer.offerAmount = offerAmount,
+                currentOffer.pinCode = pinCode,
+                currentOffer.promoCode = promoCode,
+                currentOffer.startValidity = startValidity,
+                currentOffer.endValidity = endValidity,
+                currentOffer.bank = bank,
+                currentOffer.bins = bins,
+                currentOffer.isActive = isActive,
+                currentOffer.minValue = minValue
+                
+                const result = await currentOffer.save();
+                return res.json(result);
+                    
+            }
+        }
+    }
 };

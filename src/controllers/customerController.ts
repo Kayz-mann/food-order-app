@@ -6,6 +6,7 @@ import { Customer } from '../models/customer';
 import { Food } from '../../src/models/food';
 import { GenerateOtp, GeneratePassword, GenerateSalt, GenerateSignature, onRequestOtp, ValidatePassword } from '../utility';
 import { Order } from '../models/order';
+import { Offer } from '../models/offer';
 
 
 export const customerSignUp = async (req: Request, res: Response, next: NextFunction) => {
@@ -348,4 +349,51 @@ export const getOrderById = async (req: Request, res: Response, next: NextFuncti
         return res.status(200).json(order);
     }
 };
+
+export const verifyOffer = async (req: Request, res: Response, next: NextFunction) => {
+    const offerId = req.params.id;
+    const customer = req.user;
+
+    if (customer) {
+        const appliedOffer = await Offer.findById(offerId);
+
+        if (appliedOffer) {
+
+            if (appliedOffer.promoType === "USER") {
+                
+            } else {
+                if (appliedOffer.isActive) {
+                    return res.status(200).json({ message: "Offer is valid", offer: appliedOffer });
+                }
+            }
+           
+        }
+    }
+
+    return res.status(400).json({ message: "Offer is not valid" });
+};
+
+export const createPayment = async (req: Request, res: Response, next: NextFunction) => {
+    const customer = req.user;
+    const { amount, paymentMode, offerId } = req.body;
+
+    let payableAmount = Number(amount);
+
+    // 500 - 200 = 300
+    if (offerId) {
+        const appliedOffer = await Offer.findById(offerId);
+
+        if (appliedOffer) {
+            if (appliedOffer.isActive) {
+                payableAmount = (payableAmount - appliedOffer.offerAmount);
+            }
+        }
+    }
+
+    // Perform payment gateway charge API call
+
+    // Create record on transaction
+
+    // return transaction ID
+}
 
