@@ -1,12 +1,14 @@
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import express, { Request, Response, NextFunction } from 'express';
-import { CreateCustomerInputs, EditCustomerProfileInputs, OrderInputs, UserLoginInputs } from '../dto/customer.dto';
+import { CartItem, CreateCustomerInputs, EditCustomerProfileInputs, OrderInputs, UserLoginInputs } from '../dto/customer.dto';
 import { Customer } from '../models/customer';
 import { Food } from '../../src/models/food';
 import { GenerateOtp, GeneratePassword, GenerateSalt, GenerateSignature, onRequestOtp, ValidatePassword } from '../utility';
 import { Order } from '../models/order';
 import { Offer } from '../models/offer';
+import { Transaction } from '../models/transaction';
+import { DeliveryUser, Vendor } from '../models';
 
 
 export const customerSignUp = async (req: Request, res: Response, next: NextFunction) => {
@@ -191,7 +193,7 @@ export const addToCart = async (req: Request, res: Response, next: NextFunction)
         const profile = await Customer.findById(customer._id).populate('cart.food');
         let cartItems = Array();
 
-        const { _id, unit } = <OrderInputs>req.body;
+        const { _id, unit } = <CartItem>req.body;
         
         const food = await Food.findById(_id);
 
@@ -256,32 +258,83 @@ export const deleteCart = async (req: Request, res: Response, next: NextFunction
     return res.status(400).json({ message: 'cart is already empty' });
 }
 
+// Delivery Notification
+
+const assignOrderForDelivery = async (orderId: string, vendorId: string) => {
+    // find the vendor
+    const vendor = await Vendor.findById(vendorId);
+
+    if (vendor) {
+        const areaCode = vendor.pinCode;
+        const vendorLat = vendor.lat;
+        const vendorLng = vendor.lng;
+   
+
+    // find the available delivery person
+    const deliveryPerson = await DeliveryUser.find({ pinCode:areaCode , verified: true, isAvailable: true})
+
+    // check the nearest delivery person and assign the order
+        if (deliveryPerson) {
+            const currentOrder = await Order.findById(orderId);
+
+            if (currentOrder) {
+                // update deliveryID
+                currentOrder.deliveryId = deliveryPerson[0]._id;
+                await currentOrder.save();
+
+                // Notify to vendor for received new order using firebase push notification
+                
+            }
+        }
+}
+
+}
+
 // order section
+
+const validateTransaction = async (txnId: string) => {
+    const currentTransaction = await Transaction.findById(txnId);
+    if (currentTransaction) {
+        if (currentTransaction.status.toLowerCase() !== "failed") {
+            return { status: true, currentTransaction }
+        }
+    }
+    return { status: false, currentTransaction }
+};
 
 export const createOrder = async (req: Request, res: Response, next: NextFunction) => {
     // grab current login customer
     const customer = req.user;
 
+    const { txnId, amount, items } = <OrderInputs>req.body;
+
+   
+
     if (customer) {
+        const { status, currentTransaction } = await validateTransaction(txnId);
+
+        if (!status) {
+            return res.status(400).json({ message: 'Error with create order' });
+        }
         // create an order ID
         const orderId = `${Math.floor(Math.random() * 89999) + 1000}`;
         const profile = await Customer.findById(customer._id);
 
         // Grab order items from request
-        const cart = <[OrderInputs]>req.body;
+        const cart = <[CartItem]>req.body;
         let cartItems = Array();
         let netAmount = 0.0;
         let vendorId;
 
         // Calculate order amount
-        const foods = await Food.find().where('_id').in(cart.map(item => item._id)).exec();
+        const foods = await Food.find().where('_id').in(items.map(item => item._id)).exec();
 
         foods.map(food => {
-            cart.map(({ _id, unit }) => {
+            items.map(({ _id, unit }) => {
                 if (food._id == _id) {
                     vendorId = food.vendorId;
-                    netAmount += (food.price * unit);
-                    cartItems.push({ food, unit });
+                    netAmount += food.price * unit;
+                    cartItems.push({ food, unit: unit });
                 } else {
                     console.log(`${food._id} / ${_id}`)
                 }
@@ -296,19 +349,28 @@ export const createOrder = async (req: Request, res: Response, next: NextFunctio
                 vendorId: vendorId,
                 items: cartItems,
                 totalAmount: netAmount,
+                paidAmount: amount,
                 orderDate: new Date(),
-                paidThrough: 'COD',
-                paymentResponse: '',
+                // paidThrough: 'COD',
+                // paymentResponse: '',
                 orderStatus: 'Waiting',
                 remarks: '',
                 deliveryId: '',
-                appliedOffers: false,
-                offerId: null,
+                // appliedOffers: false,
+                // offerId: null,
                 readyTime: 45,
 
             })
             profile.cart = [] as any;
             profile.orders.push(currentOrder);
+
+            currentTransaction.vendorId = vendorId,
+            currentTransaction.orderId = orderId,
+            currentTransaction.status = 'CONFIRMED';
+            
+            assignOrderForDelivery(currentOrder._id, vendorId);
+            
+            await currentTransaction.save();
 
             const profileSaveResponse = await profile.save();
             res.status(200).json(profileSaveResponse);
@@ -393,7 +455,18 @@ export const createPayment = async (req: Request, res: Response, next: NextFunct
     // Perform payment gateway charge API call
 
     // Create record on transaction
+    const transaction = await Transaction.create({
+        customer: customer._id,
+        vendorId: '',
+        orderId: '',
+        orderValue: payableAmount,
+        offerUsed: offerId || 'NA',
+        status: 'OPEN',
+        paymentMode: paymentMode,
+        paymentResponse: 'Payment is cash on delivery'
+    })
 
     // return transaction ID
+    return res.status(200).json(transaction);
 }
 

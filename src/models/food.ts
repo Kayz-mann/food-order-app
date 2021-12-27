@@ -7,7 +7,7 @@ export interface FoodDoc extends Document{
     category: string;
     foodType: string;
     readyTime: Number;
-    price: string;
+    price: any;
     rating: string;
     images: [string]
 }
