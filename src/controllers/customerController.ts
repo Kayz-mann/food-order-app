@@ -3,7 +3,7 @@ import { validate } from 'class-validator';
 import express, { Request, Response, NextFunction } from 'express';
 import { CartItem, CreateCustomerInputs, EditCustomerProfileInputs, OrderInputs, UserLoginInputs } from '../dto/customer.dto';
 import { Customer } from '../models/customer';
-import { Food } from '../../src/models/food';
+import { Food } from '../models/food';
 import { GenerateOtp, GeneratePassword, GenerateSalt, GenerateSignature, onRequestOtp, ValidatePassword } from '../utility';
 import { Order } from '../models/order';
 import { Offer } from '../models/offer';

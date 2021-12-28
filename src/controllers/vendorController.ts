@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { FindVendor } from './adminController';
-import { VendorLoginInputs, EditVendorInputs, CustomerOfferInputs } from '../../src/dto/vendor.dto';
+import { VendorLoginInputs, EditVendorInputs, CustomerOfferInputs } from '../dto/vendor.dto';
 import { GenerateSignature, ValidatePassword } from '../utility';
-import { CreateFoodInputs } from '../../src/dto/food.dto';
+import { CreateFoodInputs } from '../dto/food.dto';
 import { Food } from '../models';
 import { Order } from '../models/order';
 import { CreateCustomerInputs } from '../dto/customer.dto';
