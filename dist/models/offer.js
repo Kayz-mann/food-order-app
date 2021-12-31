@@ -19,33 +19,28 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Customer = void 0;
+exports.Offer = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
-const CustomerSchema = new mongoose_1.Schema({
-    email: { type: String, required: true },
-    password: { type: String, required: true },
-    salt: { type: String, required: true },
-    firstName: { type: String },
-    lastName: { type: String },
-    address: { type: String },
-    phone: { type: String, required: true },
-    verified: { type: Boolean, required: true },
-    otp: { type: Number, required: true },
-    otp_expiry: { type: Date, required: true },
-    lat: { type: Number },
-    lng: { type: Number },
-    cart: [
+const OfferSchema = new mongoose_1.Schema({
+    offerType: { type: String, require: true },
+    vendors: [
         {
-            food: { type: mongoose_1.Schema.Types.ObjectId, ref: 'food', require: true },
-            unit: { type: Number, require: true }
+            type: mongoose_1.Schema.Types.ObjectId, ref: 'vendor'
         }
     ],
-    orders: [
-        {
-            type: mongoose_1.Schema.Types.ObjectId,
-            ref: 'order'
-        }
-    ]
+    title: { type: String, require: true },
+    description: String,
+    minValue: { type: Number, require: true },
+    offerAmount: { type: Number, require: true },
+    startValidity: Date,
+    endValidity: Date,
+    promoCode: { type: String, require: true },
+    promoType: { type: String, require: true },
+    bank: [
+        { type: String }
+    ],
+    pinCode: { type: String, require: true },
+    isActive: Boolean
 }, {
     toJSON: {
         transform(doc, ret) {
@@ -58,6 +53,6 @@ const CustomerSchema = new mongoose_1.Schema({
     },
     timestamps: true
 });
-const Customer = mongoose_1.default.model('customer', CustomerSchema);
-exports.Customer = Customer;
-//# sourceMappingURL=customer.js.map
+const Offer = mongoose_1.default.model('offer', OfferSchema);
+exports.Offer = Offer;
+//# sourceMappingURL=offer.js.map

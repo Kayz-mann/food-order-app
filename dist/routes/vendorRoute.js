@@ -27,6 +27,10 @@ router.patch('/service', controllers_1.updateVendorService);
 router.patch('/coverimage', images, controllers_1.updateVendorCoverImage);
 router.post('/food', images, controllers_1.addFood);
 router.get('/foods', controllers_1.getFoods);
+// Orders
+router.get('/orders', controllers_1.getCurrentOrders);
+router.put('/order/:id/process', controllers_1.processOrder);
+router.get('/order/:id', controllers_1.getOrderDetails);
 router.get('/', (req, res, next) => {
     res.json({ message: "Hello vendor" });
 });

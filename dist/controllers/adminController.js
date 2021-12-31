@@ -9,8 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getVendorById = exports.getVendors = exports.createVendor = exports.FindVendor = void 0;
+exports.getDeliveryUsers = exports.verifyDeliveryUser = exports.getTransactionById = exports.getTransactions = exports.getVendorById = exports.getVendors = exports.createVendor = exports.FindVendor = void 0;
 const models_1 = require("../models");
+const transaction_1 = require("../models/transaction");
 const utility_1 = require("../utility");
 const FindVendor = (id, email) => __awaiter(void 0, void 0, void 0, function* () {
     if (email) {
@@ -44,7 +45,9 @@ const createVendor = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
         rating: 0,
         serviceAvailable: false,
         coverImages: [],
-        foods: []
+        foods: [],
+        lat: 0,
+        lng: 0
     });
     return res.json(createVendor);
 });
@@ -67,4 +70,42 @@ const getVendorById = (req, res, next) => __awaiter(void 0, void 0, void 0, func
     return res.json({ "message": "vendors data not available" });
 });
 exports.getVendorById = getVendorById;
+const getTransactions = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const transactions = yield transaction_1.Transaction.find();
+    if (transactions) {
+        return res.status(200).json(transactions);
+    }
+    return res.json({ "message": "Transaction not available" });
+});
+exports.getTransactions = getTransactions;
+const getTransactionById = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const id = req.params.id;
+    const transactions = yield transaction_1.Transaction.find();
+    if (transactions) {
+        return res.status(200).json(transactions);
+    }
+    return res.json({ "message": "Transaction not available" });
+});
+exports.getTransactionById = getTransactionById;
+const verifyDeliveryUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const { _id, status } = req.body;
+    if (_id) {
+        const profile = yield models_1.DeliveryUser.findById(_id);
+        if (profile) {
+            profile.verified = status;
+            const result = yield profile.save();
+            return res.status(200).json(result);
+        }
+    }
+    return res.status(400).json({ "message": "Unable to verify delivery user" });
+});
+exports.verifyDeliveryUser = verifyDeliveryUser;
+const getDeliveryUsers = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const deliveryUsers = yield models_1.DeliveryUser.find();
+    if (deliveryUsers) {
+        return res.status(200).json(deliveryUsers);
+    }
+    return res.status(400).json({ "message": "Unable to fetch delivery users" });
+});
+exports.getDeliveryUsers = getDeliveryUsers;
 //# sourceMappingURL=adminController.js.map

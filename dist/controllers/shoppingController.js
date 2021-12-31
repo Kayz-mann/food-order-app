@@ -9,8 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getRestaurantById = exports.searchFoods = exports.getFoodIn30Min = exports.getTopRestaurants = exports.getFoodAvailability = void 0;
+exports.getAvailableOffers = exports.getRestaurantById = exports.searchFoods = exports.getFoodIn30Min = exports.getTopRestaurants = exports.getFoodAvailability = void 0;
 const models_1 = require("../models");
+const offer_1 = require("../models/offer");
 const getFoodAvailability = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const pinCode = req.params.pinCode;
     const result = yield models_1.Vendor.find({ pincode: pinCode, serviceAvailable: false })
@@ -69,4 +70,13 @@ const getRestaurantById = (req, res, next) => __awaiter(void 0, void 0, void 0, 
     return res.status(400).json({ message: "Data not found!" });
 });
 exports.getRestaurantById = getRestaurantById;
+const getAvailableOffers = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const pincode = req.params.pincode;
+    const offers = yield offer_1.Offer.find({ pincode: pincode, isActive: true });
+    if (offers) {
+        return res.status(200).json(offers);
+    }
+    return res.status(400).json({ message: "Offers not found" });
+});
+exports.getAvailableOffers = getAvailableOffers;
 //# sourceMappingURL=shoppingController.js.map

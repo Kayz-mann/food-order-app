@@ -37,7 +37,9 @@ const VendorSchema = new mongoose_1.Schema({
     foods: [{
             type: mongoose_1.default.SchemaTypes.ObjectId,
             ref: 'food'
-        }]
+        }],
+    lat: { type: Number },
+    lng: { type: Number },
 }, {
     // retrieve and remove password parameters from the database or postman display for security
     toJSON: {

@@ -9,12 +9,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteCart = exports.getCart = exports.addToCart = exports.editCustomerProfile = exports.getCustomerProfile = exports.requestOtp = exports.customerVerify = exports.customerLogin = exports.customerSignUp = void 0;
+exports.createPayment = exports.verifyOffer = exports.getOrderById = exports.getOrder = exports.createOrder = exports.deleteCart = exports.getCart = exports.addToCart = exports.editCustomerProfile = exports.getCustomerProfile = exports.requestOtp = exports.customerVerify = exports.customerLogin = exports.customerSignUp = void 0;
 const class_transformer_1 = require("class-transformer");
 const class_validator_1 = require("class-validator");
 const customer_dto_1 = require("../dto/customer.dto");
 const customer_1 = require("../models/customer");
+const food_1 = require("../models/food");
 const utility_1 = require("../utility");
+const order_1 = require("../models/order");
+const offer_1 = require("../models/offer");
+const transaction_1 = require("../models/transaction");
+const models_1 = require("../models");
 const customerSignUp = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const customerInputs = (0, class_transformer_1.plainToClass)(customer_dto_1.CreateCustomerInputs, req.body);
     const inputErrors = yield (0, class_validator_1.validate)(customerInputs, { validationError: { target: true } });
@@ -44,7 +49,8 @@ const customerSignUp = (req, res, next) => __awaiter(void 0, void 0, void 0, fun
         address: '',
         verified: false,
         lat: 0,
-        lng: 0
+        lng: 0,
+        orders: []
     });
     if (result) {
         // send the OTP to customer
@@ -163,45 +169,236 @@ const editCustomerProfile = (req, res, next) => __awaiter(void 0, void 0, void 0
 exports.editCustomerProfile = editCustomerProfile;
 // cart section
 const addToCart = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const customer = req.user;
+    if (customer) {
+        const profile = yield customer_1.Customer.findById(customer._id).populate('cart.food');
+        let cartItems = Array();
+        const { _id, unit } = req.body;
+        const food = yield food_1.Food.findById(_id);
+        if (food) {
+            if (profile != null) {
+                //   check for cart Items
+                cartItems = profile.cart;
+                if (cartItems.length > 0) {
+                    // check and update unit
+                    let existingFoodItems = cartItems.filter((item) => item.food._id.toString() === _id);
+                    if (existingFoodItems.length > 0) {
+                        const index = cartItems.indexOf(existingFoodItems[0]);
+                        if (unit > 0) {
+                            cartItems[index] = { food, unit };
+                        }
+                        else {
+                            cartItems.splice(index, 1);
+                        }
+                    }
+                    else {
+                        cartItems.push({ food, unit });
+                    }
+                }
+            }
+            else {
+                // add new item to cart
+                cartItems.push({ food, unit });
+            }
+            if (cartItems) {
+                profile.cart = cartItems;
+                const cartResult = yield profile.save();
+                return res.status(200).json(cartResult.cart);
+            }
+        }
+    }
 });
 exports.addToCart = addToCart;
 const getCart = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const customer = req.user;
+    if (customer) {
+        const profile = yield (yield customer_1.Customer.findById(customer._id)).populate('cart.food');
+        if (profile) {
+            return res.status(200).json(profile.cart);
+        }
+    }
+    return res.status(400).json({ message: 'cart is empty' });
 });
 exports.getCart = getCart;
 const deleteCart = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const customer = req.user;
+    if (customer) {
+        const profile = yield (yield customer_1.Customer.findById(customer._id)).populate('cart.food');
+        if (profile != null) {
+            profile.cart = [];
+            const cartResult = yield profile.save();
+            return res.status(200).json(cartResult);
+        }
+    }
+    return res.status(400).json({ message: 'cart is already empty' });
 });
 exports.deleteCart = deleteCart;
+// Delivery Notification
+const assignOrderForDelivery = (orderId, vendorId) => __awaiter(void 0, void 0, void 0, function* () {
+    // find the vendor
+    const vendor = yield models_1.Vendor.findById(vendorId);
+    if (vendor) {
+        const areaCode = vendor.pinCode;
+        const vendorLat = vendor.lat;
+        const vendorLng = vendor.lng;
+        // find the available delivery person
+        const deliveryPerson = yield models_1.DeliveryUser.find({ pinCode: areaCode, verified: true, isAvailable: true });
+        // check the nearest delivery person and assign the order
+        if (deliveryPerson) {
+            const currentOrder = yield order_1.Order.findById(orderId);
+            if (currentOrder) {
+                // update deliveryID
+                currentOrder.deliveryId = deliveryPerson[0]._id;
+                yield currentOrder.save();
+                // Notify to vendor for received new order using firebase push notification
+            }
+        }
+    }
+});
 // order section
-// export const createOrder = async (req: Request, res: Response, next: NextFunction) => {
-//     const customer = req.user;
-//     if (customer) {
-//         const profile = await Customer.findById(customer._id);
-//         const orderId = `${Math.floor(Math.random() * 89999 + 1000)}`;
-//         // const cart = <{ OrderInputs }>req.body;
-//         let cartItems = Array();
-//         let netAmount = 0.0;
-//         const foods = await (await Food.find().where('_id')).includes(cart.map(item => item._id)).exec();
-//         foods.map(food => {
-//             cart.map(({ _id, unit }) => {
-//                 if (food._id == _id) {
-//                     netAmount += food.price * unit;
-//                     cartItems.push({ food, unit: unit })
-//                 } else {
-//                     console.log(`${food._id} / ${_id}`)
-//                 }
-//             })
-//         })
-//         if (cartItems) {
-//             const currentOrder = await Order.create({
-//                 orderID: orderId,
-//                 items: cartItems,
-//                 totalAmount: netAmount,
-//                 orderDate: new Date(),
-//                 paidThrough: 'COD',
-//                 paymentResponse: 'Some json response stringify',
-//                 orderStatus: 'waiting',
-//             })
-//         }
-//     }
-// }
+const validateTransaction = (txnId) => __awaiter(void 0, void 0, void 0, function* () {
+    const currentTransaction = yield transaction_1.Transaction.findById(txnId);
+    if (currentTransaction) {
+        if (currentTransaction.status.toLowerCase() !== "failed") {
+            return { status: true, currentTransaction };
+        }
+    }
+    return { status: false, currentTransaction };
+});
+const createOrder = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    // grab current login customer
+    const customer = req.user;
+    const { txnId, amount, items } = req.body;
+    if (customer) {
+        const { status, currentTransaction } = yield validateTransaction(txnId);
+        if (!status) {
+            return res.status(400).json({ message: 'Error with create order' });
+        }
+        // create an order ID
+        const orderId = `${Math.floor(Math.random() * 89999) + 1000}`;
+        const profile = yield customer_1.Customer.findById(customer._id);
+        // Grab order items from request
+        const cart = req.body;
+        let cartItems = Array();
+        let netAmount = 0.0;
+        let vendorId;
+        // Calculate order amount
+        const foods = yield food_1.Food.find().where('_id').in(items.map(item => item._id)).exec();
+        foods.map(food => {
+            items.map(({ _id, unit }) => {
+                if (food._id == _id) {
+                    vendorId = food.vendorId;
+                    netAmount += food.price * unit;
+                    cartItems.push({ food, unit: unit });
+                }
+                else {
+                    console.log(`${food._id} / ${_id}`);
+                }
+            });
+        });
+        // Create order with description
+        if (cartItems) {
+            // create order
+            const currentOrder = yield order_1.Order.create({
+                orderID: orderId,
+                vendorId: vendorId,
+                items: cartItems,
+                totalAmount: netAmount,
+                paidAmount: amount,
+                orderDate: new Date(),
+                // paidThrough: 'COD',
+                // paymentResponse: '',
+                orderStatus: 'Waiting',
+                remarks: '',
+                deliveryId: '',
+                // appliedOffers: false,
+                // offerId: null,
+                readyTime: 45,
+            });
+            profile.cart = [];
+            profile.orders.push(currentOrder);
+            currentTransaction.vendorId = vendorId,
+                currentTransaction.orderId = orderId,
+                currentTransaction.status = 'CONFIRMED';
+            assignOrderForDelivery(currentOrder._id, vendorId);
+            yield currentTransaction.save();
+            const profileSaveResponse = yield profile.save();
+            res.status(200).json(profileSaveResponse);
+            // if (currentOrder) {
+            //     profile.orders.push(currentOrder);
+            //     await profile.save();
+            //     return res.status(200).json(currentOrder);
+            // }
+        }
+        else {
+            return res.status(400).json({ message: 'Error with Create Order' });
+        }
+    }
+});
+exports.createOrder = createOrder;
+const getOrder = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const customer = req.user;
+    if (customer) {
+        const profile = yield (yield customer_1.Customer.findById(customer._id)).populate('orders');
+        if (profile) {
+            return res.status(200).json(profile.orders);
+        }
+    }
+});
+exports.getOrder = getOrder;
+const getOrderById = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const orderId = req.params.id;
+    if (orderId) {
+        const order = yield customer_1.Customer.findById(orderId).populate('items.food');
+        return res.status(200).json(order);
+    }
+});
+exports.getOrderById = getOrderById;
+const verifyOffer = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const offerId = req.params.id;
+    const customer = req.user;
+    if (customer) {
+        const appliedOffer = yield offer_1.Offer.findById(offerId);
+        if (appliedOffer) {
+            if (appliedOffer.promoType === "USER") {
+            }
+            else {
+                if (appliedOffer.isActive) {
+                    return res.status(200).json({ message: "Offer is valid", offer: appliedOffer });
+                }
+            }
+        }
+    }
+    return res.status(400).json({ message: "Offer is not valid" });
+});
+exports.verifyOffer = verifyOffer;
+const createPayment = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const customer = req.user;
+    const { amount, paymentMode, offerId } = req.body;
+    let payableAmount = Number(amount);
+    // 500 - 200 = 300
+    if (offerId) {
+        const appliedOffer = yield offer_1.Offer.findById(offerId);
+        if (appliedOffer) {
+            if (appliedOffer.isActive) {
+                payableAmount = (payableAmount - appliedOffer.offerAmount);
+            }
+        }
+    }
+    // Perform payment gateway charge API call
+    // Create record on transaction
+    const transaction = yield transaction_1.Transaction.create({
+        customer: customer._id,
+        vendorId: '',
+        orderId: '',
+        orderValue: payableAmount,
+        offerUsed: offerId || 'NA',
+        status: 'OPEN',
+        paymentMode: paymentMode,
+        paymentResponse: 'Payment is cash on delivery'
+    });
+    // return transaction ID
+    return res.status(200).json(transaction);
+});
+exports.createPayment = createPayment;
 //# sourceMappingURL=customerController.js.map

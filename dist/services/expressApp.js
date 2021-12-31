@@ -17,14 +17,17 @@ const path_1 = __importDefault(require("path"));
 const routes_1 = require("../routes");
 const shoppingRoute_1 = require("../routes/shoppingRoute");
 const customerRoute_1 = require("../routes/customerRoute");
+const deliveryRoute_1 = require("../routes/deliveryRoute");
 exports.default = (app) => __awaiter(void 0, void 0, void 0, function* () {
     app.use(express_1.default.json());
     app.use(express_1.default.urlencoded({ extended: true }));
-    app.use('/images', express_1.default.static(path_1.default.join(__dirname, 'images')));
+    const imagePath = path_1.default.join(__dirname, '../images');
+    app.use('/images', express_1.default.static(imagePath));
     app.use(shoppingRoute_1.shoppingRoute);
     app.use('/admin', routes_1.adminRoute);
     app.use('/vendor', routes_1.vendorRoute);
-    app.use('/user', customerRoute_1.customerRoute);
+    app.use('/customer', customerRoute_1.customerRoute);
+    app.use('/delivery', deliveryRoute_1.deliveryRoute);
     return app;
 });
 //# sourceMappingURL=expressApp.js.map

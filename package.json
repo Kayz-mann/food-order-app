@@ -14,9 +14,9 @@
     "node": "17.3.0",
     "npm": "8.1.0"
   },
- 
   "dependencies": {
-
+    "@react-native-community/async-storage": "^1.12.1",
+    "@types/redux": "^3.6.0",
     "bcrypt": "^5.0.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.13.2",
@@ -25,15 +25,17 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.1.0",
     "multer": "^1.4.4",
+    "react-redux": "^7.2.6",
+    "redux": "^4.1.2",
+    "redux-thunk": "^2.4.1",
     "ts-node-dev": "^1.1.8",
     "twilio": "^3.72.0"
-    
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",
-    "@types/jsonwebtoken": "^8.5.6",
     "@types/cors": "^2.8.12",
     "@types/express": "^4.17.13",
+    "@types/jsonwebtoken": "^8.5.6",
     "@types/mongoose": "^5.11.97",
     "@types/multer": "^1.4.7",
     "nodemon": "^2.0.15",
