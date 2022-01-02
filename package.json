@@ -15,7 +15,6 @@
     "npm": "8.1.0"
   },
   "dependencies": {
-    "@react-native-community/async-storage": "^1.12.1",
     "@types/redux": "^3.6.0",
     "bcrypt": "^5.0.1",
     "class-transformer": "^0.5.1",
