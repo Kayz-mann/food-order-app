@@ -9,10 +9,11 @@ interface FoodCardProps{
     item: FoodModel;
     onTap: Function;
     onUpdateCart: Function;
+    unit?: number | undefined;
 }
 
 
-const FoodCard: React.FC<FoodCardProps> = ({ item, onTap, onUpdateCart }) => {
+const FoodCard: React.FC<FoodCardProps> = ({ item, onTap, onUpdateCart, unit }) => {
 
     const didUpdateCart = (unit: number) => {
         item.unit = unit;
@@ -43,15 +44,23 @@ const FoodCard: React.FC<FoodCardProps> = ({ item, onTap, onUpdateCart }) => {
                     <Text style={{ fontSize: 18, fontWeight: '600', color: '#7c7c7c' }}>
                         ${item.price}
                     </Text>
-                    <AddRemove onAdd={() => {
-                        let unit = isNaN(item.unit) ? 0 : item.unit
-                        didUpdateCart(unit + 1);
-                    }}
-                        onRemove={() => {
+                    {unit !== undefined ? 
+                        <Text style={{ fontSize: 18, fontWeight: '700' }}>
+                            Qty: {unit}
+                        </Text>
+                        :
+
+                        <AddRemove onAdd={() => {
                             let unit = isNaN(item.unit) ? 0 : item.unit
-                            didUpdateCart(unit > 0 ? unit - 1 : unit);
+                            didUpdateCart(unit + 1);
                         }}
-                        unit={item.unit} />
+                            onRemove={() => {
+                                let unit = isNaN(item.unit) ? 0 : item.unit
+                                didUpdateCart(unit > 0 ? unit - 1 : unit);
+                            }}
+                            unit={item.unit} />
+                    }
+                  
                 </View>
             </TouchableOpacity>
         </View>

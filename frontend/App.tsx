@@ -12,6 +12,8 @@ import { SearchScreen } from './src/screens/SearchScreen';
 import { CartScreen } from './src/screens/CartScreen';
 import { LoginScreen } from './src/screens/LoginScreen';
 import { OrderScreen } from './src/screens/OrderScreen';
+import { OrderDetailScreen } from './src/screens/OrderDetailScreen';
+import { AccountScreen } from './src/screens/AccountScreen';
 
 
 
@@ -61,6 +63,7 @@ const switchNavigator = createStackNavigator({
         Cartpage: CartScreen,
         Loginpage: LoginScreen,
         OrderPage: OrderScreen,
+        OrderDetailsPage: OrderDetailScreen
       },
         {
           defaultNavigationOptions: {
@@ -77,10 +80,15 @@ const switchNavigator = createStackNavigator({
 
     Account: {
       screen: createStackNavigator({
-        Accountpage: HomeScreen,
+        Accountpage: AccountScreen,
         Loginpage: LoginScreen
       
-      }),
+      }, {
+        defaultNavigationOptions: {
+          headerShown: false
+        }
+      }
+      ),
       navigationOptions: {
         tabBarIcon: ({ focused, tintColor }) => {
           let icon = focused == true ? require('./src/images/account_icon.png') : require('./src/images/account_n_icon.png');

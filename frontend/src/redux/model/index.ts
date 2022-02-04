@@ -41,8 +41,8 @@ export interface FoodAvailability{
 //todo : Modify later
 //User Model
 export interface UserModel{
-    // firstName: string;
-    // lastName: String;
+    firstName: string;
+    lastName: String;
     // contactNumber: String;
     // token: string,
     // varified: boolean

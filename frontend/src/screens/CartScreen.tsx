@@ -152,7 +152,7 @@ const _CartScreen: React.FC<CartScreenProps> = (props) => {
                 <View style={styles.navigation}>
                 <View style={{ display: 'flex', height: 60, justifyContent: 'space-around', flexDirection: 'row', alignItems: 'center', marginLeft: 4,paddingLeft: 20, paddingRight: 20 }}>
                         <Text style={{ fontSize: 18, fontWeight: '600'}}>My Cart</Text>
-                        {user !== undefined && 
+                        {user.token !== undefined && 
                               <TouchableOpacity
                               style={{ alignItems: 'center' }}
                               onPress={() => {

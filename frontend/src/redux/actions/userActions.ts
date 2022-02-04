@@ -38,9 +38,19 @@ export interface CreateOrderAction {
     payload: OrderModel
 }
 
+export interface ViewOrdersAction {
+    readonly type: 'ON_VIEW_ORDER',
+    payload: [OrderModel]
+}
+
+export interface CancelOrdersAction {
+    readonly type: 'ON_CANCEL_ORDER',
+    payload: OrderModel
+}
 
 
-export type UserAction = UpdateLocationAction | UserErrorAction | UpdateCartAction | UserLoginAction | CreateOrderAction;
+
+export type UserAction = UpdateLocationAction | UserErrorAction | UpdateCartAction | UserLoginAction | CreateOrderAction | ViewOrdersAction | CancelOrdersAction;
 
 
 // User Actions trigger from Components
@@ -229,6 +239,68 @@ export const onCreateOrder = (cartItems: [FoodModel], user: UserModel) => {
                 // save location in local storage
                 dispatch({
                     type: 'ON_CREATE_ORDER',
+                    payload: response.data
+                })
+            }
+            
+        } catch(error) {
+            dispatch({
+                type: 'ON_USER_ERROR',
+                payload: error
+            })
+        }
+    }
+}
+
+export const onGetOrders = (user: UserModel) => {
+    
+    return async (dispatch: Dispatch<UserAction>) => {
+        try {
+            axios.defaults.headers.common['Authorization'] = `Bearer ${user.token}`;
+            const response = await axios.get<[OrderModel]>(`${BASE_URL}/user/order`)
+
+            console.log(response)
+
+            if (!response) {
+                dispatch({
+                    type: 'ON_USER_ERROR',
+                    payload: 'Create Order Failed'
+                })
+            } else {
+                // save location in local storage
+                dispatch({
+                    type: 'ON_VIEW_ORDER',
+                    payload: response.data
+                })
+            }
+            
+        } catch(error) {
+            dispatch({
+                type: 'ON_USER_ERROR',
+                payload: error
+            })
+        }
+    }
+}
+
+export const onCancelOrder = (order: OrderModel, user: UserModel) => {
+    
+    return async (dispatch: Dispatch<UserAction>) => {
+        try {
+            axios.defaults.headers.common['Authorization'] = `Bearer ${user.token}`;
+            const response = await axios.get<OrderModel>(`${BASE_URL}/user/order`)
+
+            console.log(response)
+
+            if (!response) {
+                dispatch({
+                    type: 'ON_USER_ERROR',
+                    payload: 'Create Order Failed'
+                })
+            } else {
+                // save location in local storage
+                dispatch({
+                    type: 'ON_CANCEL_ORDER',
                     payload: response.data
                 })
             }

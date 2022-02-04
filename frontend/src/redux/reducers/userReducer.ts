@@ -74,6 +74,12 @@ const UserReducer = (state: UserState = initialState, action: UserAction) => {
                     orders: [...state.orders, action.payload]
                 }
             }
+        case 'ON_VIEW_ORDER': 
+        case 'ON_CANCEL_ORDER':
+            return {
+                ...state,
+                orders: action.payload
+            }
 
         default:
             return state;
