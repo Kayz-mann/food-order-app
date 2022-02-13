@@ -1,4 +1,4 @@
-import { FoodAvailability, FoodModel } from "../model";
+import { FoodAvailability, FoodModel, OfferModel } from "../model";
 import { Dispatch } from "react";
 import axios from "axios";
 import { BASE_URL } from "../../utils";
@@ -17,6 +17,11 @@ export interface ShoppingErrorAction {
 export interface FoodSearchAction {
     readonly type: 'ON_FOOD_SEARCH',
     payload: any
+}
+
+export interface OfferSearchAction {
+    readonly type: 'ON_OFFER_SEARCH',
+    payload: [OfferModel]
 }
 
 // Trigger actions from components
@@ -77,4 +82,32 @@ export const onSearchFoods = (postCode: string) => {
         }
     }
 }
-export type ShoppingAction = AvailabilityAction | ShoppingErrorAction | FoodSearchAction;
+
+export const onGetOffers = (postCode: string) => {
+    return async (dispatch: Dispatch<ShoppingAction>) => {
+            try {
+                const response = await axios.get<[OfferModel]>(`${BASE_URL}food/offers/${postCode}`)
+                console.log(response)
+
+                if (!response) {
+                    dispatch({
+                        type: 'ON_SHOPPING_ERROR',
+                        payload: 'Offer Availability Error'
+                    })
+                } else {
+                    // save location in loacl storage
+                    dispatch({
+                        type: 'ON_OFFER_SEARCH',
+                        payload: response.data
+                    })
+                }
+            } catch (error) {
+                dispatch({
+                    type: 'ON_SHOPPING_ERROR',
+                    payload: error
+            })
+        }
+    }
+}
+
+export type ShoppingAction = AvailabilityAction | ShoppingErrorAction | FoodSearchAction | OfferSearchAction;

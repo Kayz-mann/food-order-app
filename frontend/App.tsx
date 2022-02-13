@@ -14,6 +14,7 @@ import { LoginScreen } from './src/screens/LoginScreen';
 import { OrderScreen } from './src/screens/OrderScreen';
 import { OrderDetailScreen } from './src/screens/OrderDetailScreen';
 import { AccountScreen } from './src/screens/AccountScreen';
+import { OfferScreen } from './src/screens/OfferScreen';
 
 
 
@@ -48,8 +49,13 @@ const switchNavigator = createStackNavigator({
     // offer Icon
     Offer: {
       screen: createStackNavigator({
-        Offerpage: HomeScreen
-      }),
+        Offerpage: OfferScreen
+      },{
+          defaultNavigationOptions: {
+            headerShown: false
+          }
+      }
+      ),
       navigationOptions: {
         tabBarIcon: ({ focused, tintColor }) => {
           let icon = focused == true ? require('./src/images/offer_icon.png') : require('./src/images/offer_n_icon.png');

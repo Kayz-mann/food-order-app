@@ -1,9 +1,10 @@
 import { ShoppingAction } from "../actions/shoppingActions"
-import { FoodAvailability, FoodModel, ShoppingState } from "../model"
+import { FoodAvailability, FoodModel, OfferModel, ShoppingState } from "../model"
 
 const initialState = {
     availability: {} as FoodAvailability,
-    availableFoods: {} as [FoodModel]
+    availableFoods: {} as [FoodModel],
+    offers: {} as [OfferModel]
 }
 
 const shoppingReducer = (state: ShoppingState = initialState, action: ShoppingAction) => {
@@ -18,6 +19,12 @@ const shoppingReducer = (state: ShoppingState = initialState, action: ShoppingAc
                 ...state,
                 availableFoods: action.payload
             }
+        case 'ON_OFFER_SEARCH':
+            return {
+                ...state,
+                availableFoods: action.payload
+            }
+        
         default: 
             return state
 }
