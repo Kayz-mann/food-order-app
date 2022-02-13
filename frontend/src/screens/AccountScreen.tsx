@@ -3,12 +3,7 @@ import { View, StyleSheet, Text, Image, Dimensions } from 'react-native';
 import { FlatList, ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
 
-import ButtonWithIcon from '../components/Button/ButtonWithIcon';
-import ButtonWithTitle from '../components/Button/ButtonWithTitle';
-import ButtonWithTitleIcon from '../components/Button/ButtonWithTitle';
-import FoodCard from '../components/FoodCard';
-import SearchBar from '../components/SearchBar';
-import { onUpdateCart, onCreateOrder } from '../redux/actions';
+import { onUpdateCart, onCreateOrder, onUserLogout } from '../redux/actions';
 import { FoodModel, ShoppingState, UserState } from '../redux/model';
 import { ApplicationState } from '../redux/reducers';
 import { checkExistence, useNavigation } from '../utils';
@@ -21,6 +16,7 @@ interface AccountScreenProps{
     userReducer: UserState
     onUpdateCart: Function
     onCreateOrder: Function
+    onUserLogout: Function
 }
 
 
@@ -44,14 +40,62 @@ const _AccountScreen: React.FC<AccountScreenProps> = (props) => {
 
         if(Array.isArray(Cart)){
              Cart.map(food => {
-                total += food.price + food.unit
+                total += food.price * food.unit
             })
         }
        
         setTotalAmount(total)
     }
 
-    if (user.token !== undefined) {
+    const options = [
+        {
+            title: 'Edit Profile',
+            action: () => { alert('Edit Profile') }
+        },
+        {
+            title: 'View Orders',
+            action: () => { 
+                navigate('AccountOrderPage')
+             }
+        },
+        {
+            title: 'Contact Support',
+            action: () => { alert('Contact Support') }
+        },
+        {
+            title: 'Logout',
+            action: () => { 
+                props.onUserLogout();
+             }
+        }
+    ];
+
+    const optionCard = (title: string, action: Function) => {
+        return(
+            <TouchableOpacity
+                style={{
+                    backgroundColor: '#fff',
+                    height: 80,
+                    justifyContent: 'space-around',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    padding: 10,
+                    paddingLeft: 50,
+                    paddingRight: 20,
+                    borderTopColor: '#d3d3d3',
+                    borderBottomColor: '#d3d3d3',
+                    borderTopWidth: 0.5,
+                    borderBottomWidth: 0.5,
+                }}
+                key={title}
+                onPress={() => action()}>
+                <Text style={{ flex: 1, fontSize: 18, color: '#525252' }}>{title}</Text>
+                    <Image source={require('../images/arrow_icon.png')} style={{ width: 40, height: 40  }} />
+            </TouchableOpacity>
+        )
+    }
+
+    if (user !== undefined) {
     
         return (
             <View style={styles.container}>
@@ -59,10 +103,17 @@ const _AccountScreen: React.FC<AccountScreenProps> = (props) => {
                     <View style={{ display: 'flex', height: 60, justifyContent: 'space-around', flexDirection: 'row', alignItems: 'center', marginLeft: 4,paddingLeft: 20, paddingRight: 20 }}>
                         <Image source={require('../images/avatar.png')} style={{ width: 150, height: 150, marginRight: 20 }} />
                         <View>
-                            <Text>{user.firstName || 'Guest'}</Text>
-                            <Text>{user.email}</Text>
+                            <Text style={{ fontSize: 22, fontWeight: '600'}}>{user.firstName || 'Guest'}</Text>
+                            <Text style={{ fontSize: 18 }}>{user.email}</Text>
                         </View>
                     </View>
+                </View>
+                <View style={styles.body}>
+                    <ScrollView>
+                        {options.map(({ title, action }) => {
+                            return optionCard(title, action)
+                        })}
+                    </ScrollView>
                 </View>
           </View>
       );
@@ -77,8 +128,13 @@ const _AccountScreen: React.FC<AccountScreenProps> = (props) => {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        backgroundColor: '#2f2f2'
+        flex: 3,
+        marginTop: 44,
+        padding: 10,
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center'
+        
     },
     navigation: {
         flex: 1,
@@ -86,9 +142,7 @@ const styles = StyleSheet.create({
     },
     body: {
         flex: 10,
-        justifyContent: 'center',
-        alignItems: 'center',
-        
+        display: 'flex',
     },
     footer: {
         flex: 2,
@@ -145,8 +199,10 @@ const mapStateToProps = (state: ApplicationState) => ({
     userReducer: state.userReducer
 })
 
-const AccountScreen = connect(mapStateToProps, { onUpdateCart, onCreateOrder })(_AccountScreen)
+const AccountScreen = connect(mapStateToProps, { onUpdateCart, onCreateOrder, onUserLogout })(_AccountScreen)
 
 export { AccountScreen };
+    
+
 
 

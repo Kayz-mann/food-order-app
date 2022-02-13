@@ -48,9 +48,13 @@ export interface CancelOrdersAction {
     payload: OrderModel
 }
 
+export interface UserLogoutAction {
+    readonly type: 'ON_USER_LOGOUT'
+}
 
 
-export type UserAction = UpdateLocationAction | UserErrorAction | UpdateCartAction | UserLoginAction | CreateOrderAction | ViewOrdersAction | CancelOrdersAction;
+
+export type UserAction = UpdateLocationAction | UserErrorAction | UpdateCartAction | UserLoginAction | CreateOrderAction | ViewOrdersAction | CancelOrdersAction | UserLogoutAction;
 
 
 // User Actions trigger from Components
@@ -310,6 +314,22 @@ export const onCancelOrder = (order: OrderModel, user: UserModel) => {
                 type: 'ON_USER_ERROR',
                 payload: error
             })
+        }
+    }
+}
+
+
+export const onUserLogout = () => {
+    return async (dispatch: Dispatch<UserAction>) => {
+        try {
+            dispatch({
+                type: 'ON_USER_LOGOUT'
+            })
+        } catch (error) {
+            dispatch({
+                type: 'ON_USER_ERROR',
+                payload: error
+             })
         }
     }
 }

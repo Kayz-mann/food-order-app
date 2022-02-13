@@ -16,13 +16,13 @@ const initialState: UserState = {
 const UserReducer = (state: UserState = initialState, action: UserAction) => {
     
  
-    const { type, payload } = action;
+    // const { type, payload } = action;
 
-    switch(type){
+    switch(action.type){
         case 'ON_UPDATE_LOCATION':
             return {
                 ...state,
-                location: payload
+                location: action.payload
             }
         case 'ON_UPDATE_CART':
             
@@ -59,6 +59,11 @@ const UserReducer = (state: UserState = initialState, action: UserAction) => {
                 return {
                     ...state,
                     user: action.payload
+            }
+            case 'ON_USER_LOGOUT':
+                return {
+                    ...state,
+                    user: {} as UserModel
             }
         case 'ON_CREATE_ORDER':
             if (!Array.isArray(state.orders)) {

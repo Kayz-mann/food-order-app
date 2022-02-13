@@ -55,7 +55,7 @@ const _LoginScreen: React.FC<LoginProps> = ({ onUserLogin, onUserSignup, userRed
 
 
   useEffect(() => {
-    if (user.verfied !== undefined) {
+    if (user.token !== undefined) {
       if (user.verfied === true) {
         // navigate to cart page
         navigate('CartPage');
@@ -175,4 +175,3 @@ const LoginScreen = connect(mapStateToProps, {onUserLogin, onUserSignup, onVerif
 
 export { LoginScreen };
 
-// 14:12

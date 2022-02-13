@@ -81,7 +81,9 @@ const switchNavigator = createStackNavigator({
     Account: {
       screen: createStackNavigator({
         Accountpage: AccountScreen,
-        Loginpage: LoginScreen
+        Loginpage: LoginScreen,
+        AccountOrderPage: OrderScreen,
+        OrderDetailPage: OrderDetailScreen
       
       }, {
         defaultNavigationOptions: {
@@ -122,4 +124,4 @@ const styles = StyleSheet.create({
   }
 });
 
-// 6:51
+
