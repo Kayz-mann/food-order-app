@@ -30,7 +30,7 @@ const _CartScreen: React.FC<CartScreenProps> = (props) => {
 
     const { availableFoods } = props.shoppingReducer;
     const { navigate } = useNavigation();
-    const { Cart, user, location, orders } = props.userReducer;
+    const { Cart, user, location, appliedOffer } = props.userReducer;
     const popupRef = createRef<PaymentTypePopup>();
 
     const onTapFood = (item: FoodModel) => {
@@ -66,6 +66,30 @@ const _CartScreen: React.FC<CartScreenProps> = (props) => {
             } else {
                 navigate('LoginPage');
             }
+    }
+
+    const footerContent = () => {
+        return (
+            <View style={{ flex: 1, display: 'flex'}}>
+                <TouchableOpacity style={[styles.row, { height: 80}]}>
+                    <View style={{ flex: 1 }}>
+                        <Text style={{ fontSize: 10, fontWeight: '600', color: '#525252' }}>Offers & Deals</Text>
+                        {appliedOffer._id !== undefined ? 
+                            <View>
+                                <Text>{appliedOffer.offerPercentage}% of Discount</Text>
+                            </View>
+                            :
+                            <View>
+                                <Text>
+                                   You can apply available Offers. *TnC Apply.
+                                </Text>
+                            </View>
+                        }
+                    </View>
+            </TouchableOpacity>
+        </View>
+        )
+
     }
     
     // after the payment operation call place order
@@ -177,6 +201,7 @@ const _CartScreen: React.FC<CartScreenProps> = (props) => {
                         />
                         }
                         keyExtractor={(item) => `${item._id}`}
+                        ListFooterComponent={footerContent}
                     />
                 </View>
                 <View style={styles.footer}>
@@ -186,7 +211,7 @@ const _CartScreen: React.FC<CartScreenProps> = (props) => {
                         </Text>
                         <Text style={{ fontSize: 10 }}>{totalAmount}</Text>
                     </View>
-                    <ButtonWithTitle title={'Order Now'} onTap={onValidateOrder } height={50} width={320} />
+                    <ButtonWithTitle title={'Make Payment'} onTap={onValidateOrder } height={50} width={320} />
                 </View>
                 {popupView()}
           </View>
@@ -285,6 +310,18 @@ const styles = StyleSheet.create({
     icon: {
         width: 115,
         height: 50
+    },
+    row: {
+        backgroundColor: '#fff',
+        justifyContent: 'space-around',
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 10,
+        borderColor: '#d3d3d3',
+        borderWidth: 1,
+        marginLeft: 10,
+        marginRight: 10,
+        borderRadius: 10
     }
 
 

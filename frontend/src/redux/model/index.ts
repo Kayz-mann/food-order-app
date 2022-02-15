@@ -56,7 +56,8 @@ export interface UserState{
     location: Address;
     error: string | undefined;
     Cart: [FoodModel];
-     orders: [OrderModel]
+    orders: [OrderModel]
+    appliedOffer: OfferModel
 }
 
 export interface ShoppingState{
@@ -101,4 +102,5 @@ export interface OfferModel {
     bank: [any];
     bin: [any];
     pincode: string;
+    // appliedOffer: string
 }
