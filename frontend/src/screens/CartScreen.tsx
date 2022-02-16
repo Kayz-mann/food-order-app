@@ -1,5 +1,5 @@
 import React, { createRef, useEffect, useState } from 'react';
-import { View, StyleSheet, Text, Image, Dimensions } from 'react-native';
+import { View, StyleSheet, Text, Image, Dimensions, Alert } from 'react-native';
 import { FlatList, ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
 
@@ -8,11 +8,12 @@ import ButtonWithTitle from '../components/Button/ButtonWithTitle';
 import ButtonWithTitleIcon from '../components/Button/ButtonWithTitle';
 import FoodCard from '../components/FoodCard';
 import SearchBar from '../components/SearchBar';
-import { onUpdateCart, onCreateOrder } from '../redux/actions';
+import { onUpdateCart, onCreateOrder, onApplyOffer } from '../redux/actions';
 import { FoodModel, ShoppingState, UserState } from '../redux/model';
 import { ApplicationState } from '../redux/reducers';
 import { checkExistence, useNavigation } from '../utils';
 import PaymentTypePopup from 'react-native-raw-bottom-sheet';
+import { shoppingReducer } from '../redux/reducers/shoppingReducer';
 
 
 interface CartScreenProps{
@@ -20,6 +21,7 @@ interface CartScreenProps{
     userReducer: UserState
     onUpdateCart: Function
     onCreateOrder: Function
+    onApplyOffer: Function
 }
 
 
@@ -27,6 +29,10 @@ const _CartScreen: React.FC<CartScreenProps> = (props) => {
     // const [isEditing, setIsEditing] = useState(false);
     const [keyword, setKeyword] = useState('');
     const [totalAmount, setTotalAmount] = useState(0)
+
+    const [totalTax, setTotalTax] = useState(0);
+    const [payableAmount, setPayableAmount] = useState(0)
+    const [discount, setDiscount] = useState(0)
 
     const { availableFoods } = props.shoppingReducer;
     const { navigate } = useNavigation();
@@ -41,62 +47,127 @@ const _CartScreen: React.FC<CartScreenProps> = (props) => {
         onCalculateAmount();
     }, [Cart])
 
+    const showAlert = (title: string, msg: string) => {
+        Alert.alert(
+            title,
+            msg,
+            [
+                {
+                    text: 'OK', onPress: () => {
+                        props.onApplyOffer(appliedOffer, true)
+                    }
+                }
+            ]
+        )
+    }
+
     const onCalculateAmount = () => {
         let total = 0;
 
-        if(Array.isArray(Cart)){
-             Cart.map(food => {
-                total += food.price + food.unit
+        if (Array.isArray(Cart)) {
+            Cart.map(food => {
+                total += food.price * food.unit
             })
+        }
+
+        const tax = (total / 100 * 0.9) + 40;
+
+        if (total > 0) {
+            setTotalTax(tax)
         }
        
         setTotalAmount(total)
+        setPayableAmount(total)
+        setDiscount(0)
+
+        if (appliedOffer._id !== undefined) {
+            if (total >= appliedOffer.minValue) {
+                const discount = (total / 100) * appliedOffer.offerPercentage;
+                setDiscount(discount);
+                const afterDiscount = (total - discount);
+                setPayableAmount(afterDiscount);
+                
+            } else {
+                showAlert('The Applied Offer is not Applicable!',
+                    `This offer is applicable with minimum ${appliedOffer.minValue} Only! Please select another Offer!`)
+            }
+        }
     }
 
     const onValidateOrder = () => {
         if (user !== undefined) {
-            if(!user.verfied){
+            if (!user.verfied) {
                 // navigate to login page
                 navigate('LoginPage')
-                } else {
-                    // place order
-                    console.log('Now we can order')
-                    popupRef.current?.open();
-                }
             } else {
-                navigate('LoginPage');
+                // place order
+                console.log('Now we can order')
+                popupRef.current?.open();
             }
+        } else {
+            navigate('LoginPage');
+        }
     }
 
     const footerContent = () => {
         return (
-            <View style={{ flex: 1, display: 'flex'}}>
-                <TouchableOpacity style={[styles.row, { height: 80}]}>
+            <View style={{ flex: 1 }}>
+                <TouchableOpacity
+                    onPress={() => {
+                        navigate('CartOfferPage')
+                    }}
+                    style={[styles.row, { height: 80 }]}>
                     <View style={{ flex: 1 }}>
                         <Text style={{ fontSize: 10, fontWeight: '600', color: '#525252' }}>Offers & Deals</Text>
-                        {appliedOffer._id !== undefined ? 
+                        {appliedOffer._id !== undefined ?
                             <View>
-                                <Text>{appliedOffer.offerPercentage}% of Discount</Text>
+                                <Text style={{ fontSize: 14, fontWeight: '500', color: '#3d933f' }}>Applied {appliedOffer.offerPercentage}% of Discount</Text>
                             </View>
                             :
                             <View>
-                                <Text>
-                                   You can apply available Offers. *TnC Apply.
+                                <Text style={{ color: '#336840', fontSize: 16 }}>
+                                    You can apply available Offers. *TnC Apply.
                                 </Text>
                             </View>
                         }
                     </View>
-            </TouchableOpacity>
-        </View>
+                    <Image source={require('../images/arrow_icon.png')} style={{ width: 30, height: 30 }} />
+                </TouchableOpacity>
+                <View style={[styles.row, { height: 250, justifyContent: 'flex-start', alignItems: 'flex-start' }]}>
+                    <Text style={{ flex: 1, fontSize: 18, fontWeight: '600', color: '#525252', marginBottom: 10}}>
+                         Bill Details
+                    </Text>
+                    <View style={{ flex: 1, display: 'flex', flexDirection: 'row', marginTop: 10, justifyContent: 'space-around'}}>
+                        <Text style={{ flex: 1, fontSize: 14 }}>Total</Text>
+                        <Text style={{ fontSize: 16 }}>{totalAmount.toFixed(0)}</Text>
+                    </View>
+                    <View style={{ flex: 1, display: 'flex', flexDirection: 'row', marginTop: 10, justifyContent: 'space-around'}}>
+                        <Text style={{ flex: 1, fontSize: 14 }}>Tax and Delivery Charge</Text>
+                        <Text style={{ fontSize: 16 }}>{totalTax.toFixed(0)}</Text>
+                    </View>
+                    {appliedOffer._id !== undefined && 
+                        <View style={{ flex: 1, display: 'flex', flexDirection: 'row', marginTop: 10, justifyContent: 'space-around'}}>
+                            <Text style={{ flex: 1, fontSize: 14 }}>Discount Applied {appliedOffer.offerPercentage}%</Text>
+                            <Text style={{ fontSize: 16 }}>{discount.toFixed(0)}</Text>
+                        </View>
+                    }
+                    <View style={{ flex: 1, display: 'flex', flexDirection: 'row', marginTop: 10, justifyContent: 'space-around'}}>
+                        <Text style={{ flex: 1, fontSize: 14 }}>Not Payable</Text>
+                        <Text style={{ fontSize: 16 }}>{payableAmount.toFixed(0)}</Text>
+                    </View>
+                </View>
+                
+            </View>
         )
-
     }
     
-    // after the payment operation call place order
+    
+   // after the payment operation call place order
     const onTapPlaceOrder = () => {
         props.onCreateOrder(Cart, user);
         popupRef.current?.close();
-    }
+        props.onApplyOffer(appliedOffer, true)
+    } 
 
     const popupView = () => {
         return (
@@ -128,16 +199,16 @@ const _CartScreen: React.FC<CartScreenProps> = (props) => {
                     }}
                 >
                     <View style={styles.paymentView}>
-                    <Text style={{ fontSize: 20, fontWeight: '700' }}>
-                        Payable Amount
-                    </Text>
-                        <Text>NGN{totalAmount.toFixed(2) }</Text>
+                        <Text style={{ fontSize: 20, fontWeight: '700' }}>
+                            Payable Amount
+                        </Text>
+                        <Text>NGN{payableAmount.toFixed(2)}</Text>
                     </View>
                     <View style={{ display: 'flex', height: 100, padding: 20, flexDirection: 'row' }}>
                         <Image source={require('../images/delivery_icon.png')}
-                            style={{ width: 50, height: 50}}
+                            style={{ width: 50, height: 50 }}
                         />
-                        <Text style={{ fontSize: 16, fontWeight: '600', marginBottom: 5}}>Address Used to Delivery</Text>
+                        <Text style={{ fontSize: 16, fontWeight: '600', marginBottom: 5 }}>Address Used to Delivery</Text>
                         <Text style={{ fontSize: 16, color: '#666666', marginBottom: 5, width: Dimensions.get('screen').width - 60 }}>{`${location.name}, ${location.street}, ${location.postalCode}, ${location.city}`}</Text>
                     </View>
                     <ScrollView horizontal={true}>
@@ -160,7 +231,7 @@ const _CartScreen: React.FC<CartScreenProps> = (props) => {
                                 {/* Card */}
                                 <Text style={{ fontSize: 16, fontWeight: '600', color: '#545252' }}>Card Payment</Text>
                             </TouchableOpacity>
-                         </View>
+                        </View>
                     </ScrollView>
 
                 </View>
@@ -174,19 +245,19 @@ const _CartScreen: React.FC<CartScreenProps> = (props) => {
         return (
             <View style={styles.container}>
                 <View style={styles.navigation}>
-                <View style={{ display: 'flex', height: 60, justifyContent: 'space-around', flexDirection: 'row', alignItems: 'center', marginLeft: 4,paddingLeft: 20, paddingRight: 20 }}>
-                        <Text style={{ fontSize: 18, fontWeight: '600'}}>My Cart</Text>
-                        {user.token !== undefined && 
-                              <TouchableOpacity
-                              style={{ alignItems: 'center' }}
-                              onPress={() => {
-                                  // go to the order details page
-                                  navigate('OrderPage')
-                              }}
-                          >
-                              <Image source={require('../images/orders.png')} style={{ width: 50, height: 50}} />
-                          </TouchableOpacity>
-                      }
+                    <View style={{ display: 'flex', height: 60, justifyContent: 'space-around', flexDirection: 'row', alignItems: 'center', marginLeft: 4, paddingLeft: 20, paddingRight: 20 }}>
+                        <Text style={{ fontSize: 18, fontWeight: '600' }}>My Cart</Text>
+                        {user.token !== undefined &&
+                            <TouchableOpacity
+                                style={{ alignItems: 'center' }}
+                                onPress={() => {
+                                    // go to the order details page
+                                    navigate('OrderPage')
+                                }}
+                            >
+                                <Image source={require('../images/orders.png')} style={{ width: 50, height: 50 }} />
+                            </TouchableOpacity>
+                        }
                     </View>
                 </View>
                 <View style={styles.body}>
@@ -209,34 +280,34 @@ const _CartScreen: React.FC<CartScreenProps> = (props) => {
                         <Text style={{ fontSize: 10 }}>
                             Total
                         </Text>
-                        <Text style={{ fontSize: 10 }}>{totalAmount}</Text>
+                        <Text style={{ fontSize: 10 }}>{payableAmount}</Text>
                     </View>
-                    <ButtonWithTitle title={'Make Payment'} onTap={onValidateOrder } height={50} width={320} />
+                    <ButtonWithTitle title={'Make Payment'} onTap={onValidateOrder} height={50} width={320} />
                 </View>
                 {popupView()}
-          </View>
-      );
+            </View>
+        );
     } else {
         return (
             <View style={styles.container}>
                 <View style={styles.navigation}>
-                    <View style={{ display: 'flex', height: 60, justifyContent: 'space-around', flexDirection: 'row', alignItems: 'center', marginLeft: 4,paddingLeft: 20, paddingRight: 20 }}>
-                        <Text style={{ fontSize: 18, fontWeight: '600'}}>My Cart</Text>
-                        {user !== undefined && 
-                              <TouchableOpacity
-                              style={{ alignItems: 'center' }}
-                              onPress={() => {
-                                  // go to the order details page
-                                  navigate('OrderPage')
-                              }}
-                          >
-                              <Image source={require('../images/orders.png')} style={{ width: 50, height: 50}} />
-                          </TouchableOpacity>
-                      }
+                    <View style={{ display: 'flex', height: 60, justifyContent: 'space-around', flexDirection: 'row', alignItems: 'center', marginLeft: 4, paddingLeft: 20, paddingRight: 20 }}>
+                        <Text style={{ fontSize: 18, fontWeight: '600' }}>My Cart</Text>
+                        {user !== undefined &&
+                            <TouchableOpacity
+                                style={{ alignItems: 'center' }}
+                                onPress={() => {
+                                    // go to the order details page
+                                    navigate('OrderPage')
+                                }}
+                            >
+                                <Image source={require('../images/orders.png')} style={{ width: 50, height: 50 }} />
+                            </TouchableOpacity>
+                        }
                     </View>
                 </View>
                 <View style={styles.body}>
-                    <Text style={{ fontSize: 25, fontWeight: '600'}}>Your Cart is Empty</Text>
+                    <Text style={{ fontSize: 25, fontWeight: '600' }}>Your Cart is Empty</Text>
                 </View>
 
             </View>
@@ -246,9 +317,8 @@ const _CartScreen: React.FC<CartScreenProps> = (props) => {
             //     </Text>
             // </View>
         )
+    }
 }
-}
-
 
 
 const styles = StyleSheet.create({
@@ -321,21 +391,21 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         marginLeft: 10,
         marginRight: 10,
-        borderRadius: 10
+        borderRadius: 10,
+        marginBottom: 15
     }
 
-
-
-})
+}) 
 
 const mapStateToProps = (state: ApplicationState) => ({
     shoppingReducer: state.shoppingReducer,
     userReducer: state.userReducer
-})
+}) 
 
-const CartScreen = connect(mapStateToProps, { onUpdateCart, onCreateOrder })(_CartScreen)
+const CartScreen = connect(mapStateToProps, { onUpdateCart, onCreateOrder, onApplyOffer })(_CartScreen)
 
 export { CartScreen };
 
 
-// 8:23
+// 8:23 
+

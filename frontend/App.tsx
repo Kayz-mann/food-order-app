@@ -69,7 +69,8 @@ const switchNavigator = createStackNavigator({
         Cartpage: CartScreen,
         Loginpage: LoginScreen,
         OrderPage: OrderScreen,
-        OrderDetailsPage: OrderDetailScreen
+        OrderDetailsPage: OrderDetailScreen,
+        CartOfferPage: OfferScreen
       },
         {
           defaultNavigationOptions: {
