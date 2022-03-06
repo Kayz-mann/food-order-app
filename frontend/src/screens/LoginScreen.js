@@ -56,7 +56,7 @@ const _LoginScreen = ({ onUserLogin, onUserSignup, userReducer, onOTPRequest, on
     const { user } = userReducer;
     const { navigate } = (0, utils_1.useNavigation)();
     (0, react_1.useEffect)(() => {
-        if (user.verfied !== undefined) {
+        if (user.token !== undefined) {
             if (user.verfied === true) {
                 // navigate to cart page
                 navigate('CartPage');
@@ -152,5 +152,4 @@ const mapStateToProps = (state) => ({
 });
 const LoginScreen = (0, react_redux_1.connect)(mapStateToProps, { onUserLogin: actions_1.onUserLogin, onUserSignup: actions_1.onUserSignup, onVerifyOTP: actions_1.onVerifyOTP, onOTPRequest: actions_1.onOTPRequest })(_LoginScreen);
 exports.LoginScreen = LoginScreen;
-// 14:12
 //# sourceMappingURL=LoginScreen.js.map

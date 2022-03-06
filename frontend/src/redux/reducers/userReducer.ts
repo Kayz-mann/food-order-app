@@ -1,7 +1,7 @@
 
 import { Address } from 'expo-location'
 import {  UserAction} from '../actions'
-import { UserModel, UserState, FoodModel, OrderModel, OfferModel } from '../model'
+import { UserModel, UserState, FoodModel, OrderModel, OfferModel, PickedAddress } from '../model'
 
 
 const initialState: UserState = {
@@ -10,7 +10,8 @@ const initialState: UserState = {
     error: undefined,
     Cart: {} as [FoodModel],
     orders: {} as [OrderModel],
-    appliedOffer: {} as OfferModel
+    appliedOffer: {} as OfferModel,
+    pickedAddress: {} as PickedAddress
 }
 
 
@@ -95,6 +96,11 @@ const UserReducer = (state: UserState = initialState, action: UserAction) => {
                 return {
                     ...state,
                     appliedOffer: {}
+            }
+            case 'ON_FETCH_LOCATION':
+                return {
+                    ...state,
+                    pickedAddress: action.payload
                 }
 
         default:

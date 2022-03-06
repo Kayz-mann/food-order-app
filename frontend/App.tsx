@@ -15,6 +15,7 @@ import { OrderScreen } from './src/screens/OrderScreen';
 import { OrderDetailScreen } from './src/screens/OrderDetailScreen';
 import { AccountScreen } from './src/screens/AccountScreen';
 import { OfferScreen } from './src/screens/OfferScreen';
+import {LocationScreen} from './src/screens/LocationScreen';
 
 
 
@@ -23,6 +24,7 @@ const switchNavigator = createStackNavigator({
   landingStack: {
     screen: createStackNavigator({
       Landing: LandingScreen,
+      LocationPage: LocationScreen
     }, {
       defaultNavigationOptions: {
         headerShown: false
@@ -36,7 +38,8 @@ const switchNavigator = createStackNavigator({
         Homepage: HomeScreen,
         SearchPage: SearchScreen,
         RestaurantPage: RestaurantScreen,
-        FoodDetailPage: FoodDetailScreen
+        FoodDetailPage: FoodDetailScreen,
+        LocationPage: LocationScreen
       }),
       navigationOptions: {
         tabBarIcon: ({ focused, tintColor }) => {

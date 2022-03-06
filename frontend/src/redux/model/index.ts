@@ -57,7 +57,8 @@ export interface UserState{
     error: string | undefined;
     Cart: [FoodModel];
     orders: [OrderModel]
-    appliedOffer: OfferModel
+    appliedOffer: OfferModel,
+    pickedAddress: PickedAddress
 }
 
 export interface ShoppingState{
@@ -104,3 +105,30 @@ export interface OfferModel {
     pincode: string;
     // appliedOffer: string
 }
+
+export interface PickedAddress {
+    address_components: [
+        {
+            long_name: string,
+            short_name: string,
+            types: [string]
+        }
+    ],
+    formatted_address: string,
+    place_id: string
+}
+
+export interface PickedLocationResult {
+    results: [{
+        address_components: [
+            {
+                long_name: string,
+                short_name: string,
+                types: [string]
+            }
+        ],
+        formatted_address: string,
+        place_id: string
+    }]
+}
+ 

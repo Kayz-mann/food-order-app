@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, StyleSheet, Text, FlatList, ScrollView } from 'react-native';
+import { View, StyleSheet, Text, FlatList, ScrollView, Image } from 'react-native';
 
 import SearchBar from '../components/SearchBar';
 import ButtonWithIcon from '../components/Button/ButtonWithIcon';
@@ -32,7 +32,7 @@ const _HomeScreen: React.FC<HomeProps> = (props) => {
         setTimeout(() => {
             props.onSearchFoods(location.postalCode)
         }, 1000)
-    });
+    }, [,location]);
 
     const onTapRestaurant = (item: Restaurant) => {
         navigate('RestaurantPage', { restaurants: item})
@@ -45,9 +45,11 @@ const _HomeScreen: React.FC<HomeProps> = (props) => {
     return (
         <View style={styles.container}>
             <View style={styles.navigation}>
-                <View style={{ marginTop: 50, flex: 4, backgroundColor: 'white', paddingLeft: 20, paddingRight: 20 }}>
-                    <Text>{`${location.name}, ${location.street}, ${location.city}`}</Text>
-                    <Text>Edit</Text>
+                <View style={{ marginTop: 50, flex: 4, backgroundColor: 'white', paddingLeft: 30, paddingRight: 20, alignItems: 'center', justifyContent: 'flex-start' }}>
+                    <Image source={require('../images/delivery_icon.png')} style={{ width: 32, height: 32 }} />
+                    {/* <Text>{`${location.name}, ${location.street}, ${location.city}`}</Text> */}
+                    <Text style={{ width: 280, marginRight: 5  }}>{`${location.displayAddress}`}</Text>
+                    <ButtonWithIcon onTap={() => {navigate('LocationPage')}} icon={require('../images/edit_icon.png')} width={24} height={40} />
                 </View>
                 <View style={{ height: 60, justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', paddingLeft: 4 }}>
                 <SearchBar

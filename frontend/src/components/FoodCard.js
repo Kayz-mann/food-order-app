@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = __importDefault(require("react"));
 const react_native_1 = require("react-native");
 const AddRemove_1 = __importDefault(require("../components/Button/AddRemove"));
-const FoodCard = ({ item, onTap, onUpdateCart }) => {
+const FoodCard = ({ item, onTap, onUpdateCart, unit }) => {
     const didUpdateCart = (unit) => {
         item.unit = unit;
         onUpdateCart(item);
@@ -32,13 +32,19 @@ const FoodCard = ({ item, onTap, onUpdateCart }) => {
                     <react_native_1.Text style={{ fontSize: 18, fontWeight: '600', color: '#7c7c7c' }}>
                         ${item.price}
                     </react_native_1.Text>
-                    <AddRemove_1.default onAdd={() => {
-            let unit = isNaN(item.unit) ? 0 : item.unit;
-            didUpdateCart(unit + 1);
-        }} onRemove={() => {
-            let unit = isNaN(item.unit) ? 0 : item.unit;
-            didUpdateCart(unit > 0 ? unit - 1 : unit);
-        }} unit={item.unit}/>
+                    {unit !== undefined ?
+            <react_native_1.Text style={{ fontSize: 18, fontWeight: '700' }}>
+                            Qty: {unit}
+                        </react_native_1.Text>
+            :
+                <AddRemove_1.default onAdd={() => {
+                        let unit = isNaN(item.unit) ? 0 : item.unit;
+                        didUpdateCart(unit + 1);
+                    }} onRemove={() => {
+                        let unit = isNaN(item.unit) ? 0 : item.unit;
+                        didUpdateCart(unit > 0 ? unit - 1 : unit);
+                    }} unit={item.unit}/>}
+                  
                 </react_native_1.View>
             </react_native_1.TouchableOpacity>
         </react_native_1.View>);

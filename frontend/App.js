@@ -16,10 +16,15 @@ const SearchScreen_1 = require("./src/screens/SearchScreen");
 const CartScreen_1 = require("./src/screens/CartScreen");
 const LoginScreen_1 = require("./src/screens/LoginScreen");
 const OrderScreen_1 = require("./src/screens/OrderScreen");
+const OrderDetailScreen_1 = require("./src/screens/OrderDetailScreen");
+const AccountScreen_1 = require("./src/screens/AccountScreen");
+const OfferScreen_1 = require("./src/screens/OfferScreen");
+const LocationScreen_1 = __importDefault(require("./src/screens/LocationScreen"));
 const switchNavigator = (0, react_navigation_stack_1.createStackNavigator)({
     landingStack: {
         screen: (0, react_navigation_stack_1.createStackNavigator)({
             Landing: LandingScreen_1.default,
+            LocationPage: LocationScreen_1.default
         }, {
             defaultNavigationOptions: {
                 headerShown: false
@@ -44,7 +49,11 @@ const switchNavigator = (0, react_navigation_stack_1.createStackNavigator)({
         // offer Icon
         Offer: {
             screen: (0, react_navigation_stack_1.createStackNavigator)({
-                Offerpage: HomeScreen_1.HomeScreen
+                Offerpage: OfferScreen_1.OfferScreen
+            }, {
+                defaultNavigationOptions: {
+                    headerShown: false
+                }
             }),
             navigationOptions: {
                 tabBarIcon: ({ focused, tintColor }) => {
@@ -58,6 +67,8 @@ const switchNavigator = (0, react_navigation_stack_1.createStackNavigator)({
                 Cartpage: CartScreen_1.CartScreen,
                 Loginpage: LoginScreen_1.LoginScreen,
                 OrderPage: OrderScreen_1.OrderScreen,
+                OrderDetailsPage: OrderDetailScreen_1.OrderDetailScreen,
+                CartOfferPage: OfferScreen_1.OfferScreen
             }, {
                 defaultNavigationOptions: {
                     headerShown: false
@@ -72,8 +83,14 @@ const switchNavigator = (0, react_navigation_stack_1.createStackNavigator)({
         },
         Account: {
             screen: (0, react_navigation_stack_1.createStackNavigator)({
-                Accountpage: HomeScreen_1.HomeScreen,
-                Loginpage: LoginScreen_1.LoginScreen
+                Accountpage: AccountScreen_1.AccountScreen,
+                Loginpage: LoginScreen_1.LoginScreen,
+                AccountOrderPage: OrderScreen_1.OrderScreen,
+                OrderDetailPage: OrderDetailScreen_1.OrderDetailScreen
+            }, {
+                defaultNavigationOptions: {
+                    headerShown: false
+                }
             }),
             navigationOptions: {
                 tabBarIcon: ({ focused, tintColor }) => {
@@ -103,5 +120,4 @@ const styles = react_native_1.StyleSheet.create({
         width: 20
     }
 });
-// 6:51
 //# sourceMappingURL=App.js.map

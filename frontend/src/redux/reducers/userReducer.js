@@ -6,13 +6,14 @@ const initialState = {
     location: {},
     error: undefined,
     Cart: {},
-    orders: {}
+    orders: {},
+    appliedOffer: {}
 };
 const UserReducer = (state = initialState, action) => {
-    const { type, payload } = action;
-    switch (type) {
+    // const { type, payload } = action;
+    switch (action.type) {
         case 'ON_UPDATE_LOCATION':
-            return Object.assign(Object.assign({}, state), { location: payload });
+            return Object.assign(Object.assign({}, state), { location: action.payload });
         case 'ON_UPDATE_CART':
             if (!Array.isArray(state.Cart)) {
                 return Object.assign(Object.assign({}, state), { Cart: [action.payload] });
@@ -33,6 +34,8 @@ const UserReducer = (state = initialState, action) => {
             }
         case 'ON_USER_LOGIN':
             return Object.assign(Object.assign({}, state), { user: action.payload });
+        case 'ON_USER_LOGOUT':
+            return Object.assign(Object.assign({}, state), { user: {} });
         case 'ON_CREATE_ORDER':
             if (!Array.isArray(state.orders)) {
                 return Object.assign(Object.assign({}, state), { Cart: [], orders: [action.payload] });
@@ -40,6 +43,13 @@ const UserReducer = (state = initialState, action) => {
             else {
                 return Object.assign(Object.assign({}, state), { Cart: [], orders: [...state.orders, action.payload] });
             }
+        case 'ON_VIEW_ORDER':
+        case 'ON_CANCEL_ORDER':
+            return Object.assign(Object.assign({}, state), { orders: action.payload });
+        case 'ON_ADD_OFFER':
+            return Object.assign(Object.assign({}, state), { appliedOffer: action.payload });
+        case 'ON_REMOVE_OFFER':
+            return Object.assign(Object.assign({}, state), { appliedOffer: {} });
         default:
             return state;
     }

@@ -36,9 +36,12 @@ const _CartScreen = (props) => {
     // const [isEditing, setIsEditing] = useState(false);
     const [keyword, setKeyword] = (0, react_1.useState)('');
     const [totalAmount, setTotalAmount] = (0, react_1.useState)(0);
+    const [totalTax, setTotalTax] = (0, react_1.useState)(0);
+    const [payableAmount, setPayableAmount] = (0, react_1.useState)(0);
+    const [discount, setDiscount] = (0, react_1.useState)(0);
     const { availableFoods } = props.shoppingReducer;
     const { navigate } = (0, utils_1.useNavigation)();
-    const { Cart, user, location, orders } = props.userReducer;
+    const { Cart, user, location, appliedOffer } = props.userReducer;
     const popupRef = (0, react_1.createRef)();
     const onTapFood = (item) => {
         navigate('FoodDetailPage', { food: item });
@@ -46,14 +49,40 @@ const _CartScreen = (props) => {
     (0, react_1.useEffect)(() => {
         onCalculateAmount();
     }, [Cart]);
+    const showAlert = (title, msg) => {
+        react_native_1.Alert.alert(title, msg, [
+            {
+                text: 'OK', onPress: () => {
+                    props.onApplyOffer(appliedOffer, true);
+                }
+            }
+        ]);
+    };
     const onCalculateAmount = () => {
         let total = 0;
         if (Array.isArray(Cart)) {
             Cart.map(food => {
-                total += food.price + food.unit;
+                total += food.price * food.unit;
             });
         }
+        const tax = (total / 100 * 0.9) + 40;
+        if (total > 0) {
+            setTotalTax(tax);
+        }
         setTotalAmount(total);
+        setPayableAmount(total);
+        setDiscount(0);
+        if (appliedOffer._id !== undefined) {
+            if (total >= appliedOffer.minValue) {
+                const discount = (total / 100) * appliedOffer.offerPercentage;
+                setDiscount(discount);
+                const afterDiscount = (total - discount);
+                setPayableAmount(afterDiscount);
+            }
+            else {
+                showAlert('The Applied Offer is not Applicable!', `This offer is applicable with minimum ${appliedOffer.minValue} Only! Please select another Offer!`);
+            }
+        }
     };
     const onValidateOrder = () => {
         var _a;
@@ -72,11 +101,57 @@ const _CartScreen = (props) => {
             navigate('LoginPage');
         }
     };
+    const footerContent = () => {
+        return (<react_native_1.View style={{ flex: 1 }}>
+                <react_native_gesture_handler_1.TouchableOpacity onPress={() => {
+                navigate('CartOfferPage');
+            }} style={[styles.row, { height: 80 }]}>
+                    <react_native_1.View style={{ flex: 1 }}>
+                        <react_native_1.Text style={{ fontSize: 10, fontWeight: '600', color: '#525252' }}>Offers & Deals</react_native_1.Text>
+                        {appliedOffer._id !== undefined ?
+                <react_native_1.View>
+                                <react_native_1.Text style={{ fontSize: 14, fontWeight: '500', color: '#3d933f' }}>Applied {appliedOffer.offerPercentage}% of Discount</react_native_1.Text>
+                            </react_native_1.View>
+                :
+                    <react_native_1.View>
+                                <react_native_1.Text style={{ color: '#336840', fontSize: 16 }}>
+                                    You can apply available Offers. *TnC Apply.
+                                </react_native_1.Text>
+                            </react_native_1.View>}
+                    </react_native_1.View>
+                    <react_native_1.Image source={require('../images/arrow_icon.png')} style={{ width: 30, height: 30 }}/>
+                </react_native_gesture_handler_1.TouchableOpacity>
+                <react_native_1.View style={[styles.row, { height: 250, justifyContent: 'flex-start', alignItems: 'flex-start' }]}>
+                    <react_native_1.Text style={{ flex: 1, fontSize: 18, fontWeight: '600', color: '#525252', marginBottom: 10 }}>
+                         Bill Details
+                    </react_native_1.Text>
+                    <react_native_1.View style={{ flex: 1, display: 'flex', flexDirection: 'row', marginTop: 10, justifyContent: 'space-around' }}>
+                        <react_native_1.Text style={{ flex: 1, fontSize: 14 }}>Total</react_native_1.Text>
+                        <react_native_1.Text style={{ fontSize: 16 }}>{totalAmount.toFixed(0)}</react_native_1.Text>
+                    </react_native_1.View>
+                    <react_native_1.View style={{ flex: 1, display: 'flex', flexDirection: 'row', marginTop: 10, justifyContent: 'space-around' }}>
+                        <react_native_1.Text style={{ flex: 1, fontSize: 14 }}>Tax and Delivery Charge</react_native_1.Text>
+                        <react_native_1.Text style={{ fontSize: 16 }}>{totalTax.toFixed(0)}</react_native_1.Text>
+                    </react_native_1.View>
+                    {appliedOffer._id !== undefined &&
+                <react_native_1.View style={{ flex: 1, display: 'flex', flexDirection: 'row', marginTop: 10, justifyContent: 'space-around' }}>
+                            <react_native_1.Text style={{ flex: 1, fontSize: 14 }}>Discount Applied {appliedOffer.offerPercentage}%</react_native_1.Text>
+                            <react_native_1.Text style={{ fontSize: 16 }}>{discount.toFixed(0)}</react_native_1.Text>
+                        </react_native_1.View>}
+                    <react_native_1.View style={{ flex: 1, display: 'flex', flexDirection: 'row', marginTop: 10, justifyContent: 'space-around' }}>
+                        <react_native_1.Text style={{ flex: 1, fontSize: 14 }}>Not Payable</react_native_1.Text>
+                        <react_native_1.Text style={{ fontSize: 16 }}>{payableAmount.toFixed(0)}</react_native_1.Text>
+                    </react_native_1.View>
+                </react_native_1.View>
+                
+            </react_native_1.View>);
+    };
     // after the payment operation call place order
     const onTapPlaceOrder = () => {
         var _a;
         props.onCreateOrder(Cart, user);
         (_a = popupRef.current) === null || _a === void 0 ? void 0 : _a.close();
+        props.onApplyOffer(appliedOffer, true);
     };
     const popupView = () => {
         return (<react_native_raw_bottom_sheet_1.default height={400} ref={popupRef} closeOnDragDown={true} closeOnPressMask={false} customStyles={{
@@ -99,10 +174,10 @@ const _CartScreen = (props) => {
                 backgroundColor: 'gray'
             }}>
                     <react_native_1.View style={styles.paymentView}>
-                    <react_native_1.Text style={{ fontSize: 20, fontWeight: '700' }}>
-                        Payable Amount
-                    </react_native_1.Text>
-                        <react_native_1.Text>NGN{totalAmount.toFixed(2)}</react_native_1.Text>
+                        <react_native_1.Text style={{ fontSize: 20, fontWeight: '700' }}>
+                            Payable Amount
+                        </react_native_1.Text>
+                        <react_native_1.Text>NGN{payableAmount.toFixed(2)}</react_native_1.Text>
                     </react_native_1.View>
                     <react_native_1.View style={{ display: 'flex', height: 100, padding: 20, flexDirection: 'row' }}>
                         <react_native_1.Image source={require('../images/delivery_icon.png')} style={{ width: 50, height: 50 }}/>
@@ -123,7 +198,7 @@ const _CartScreen = (props) => {
                                 {/* Card */}
                                 <react_native_1.Text style={{ fontSize: 16, fontWeight: '600', color: '#545252' }}>Card Payment</react_native_1.Text>
                             </react_native_gesture_handler_1.TouchableOpacity>
-                         </react_native_1.View>
+                        </react_native_1.View>
                     </react_native_gesture_handler_1.ScrollView>
 
                 </react_native_1.View>
@@ -133,31 +208,31 @@ const _CartScreen = (props) => {
     if (Cart.length > 0) {
         return (<react_native_1.View style={styles.container}>
                 <react_native_1.View style={styles.navigation}>
-                <react_native_1.View style={{ display: 'flex', height: 60, justifyContent: 'space-around', flexDirection: 'row', alignItems: 'center', marginLeft: 4, paddingLeft: 20, paddingRight: 20 }}>
+                    <react_native_1.View style={{ display: 'flex', height: 60, justifyContent: 'space-around', flexDirection: 'row', alignItems: 'center', marginLeft: 4, paddingLeft: 20, paddingRight: 20 }}>
                         <react_native_1.Text style={{ fontSize: 18, fontWeight: '600' }}>My Cart</react_native_1.Text>
-                        {user !== undefined &&
+                        {user.token !== undefined &&
                 <react_native_gesture_handler_1.TouchableOpacity style={{ alignItems: 'center' }} onPress={() => {
                         // go to the order details page
                         navigate('OrderPage');
                     }}>
-                              <react_native_1.Image source={require('../images/orders.png')} style={{ width: 50, height: 50 }}/>
-                          </react_native_gesture_handler_1.TouchableOpacity>}
+                                <react_native_1.Image source={require('../images/orders.png')} style={{ width: 50, height: 50 }}/>
+                            </react_native_gesture_handler_1.TouchableOpacity>}
                     </react_native_1.View>
                 </react_native_1.View>
                 <react_native_1.View style={styles.body}>
-                    <react_native_gesture_handler_1.FlatList showsHorizontalScrollIndicator={true} data={Cart} renderItem={({ item }) => <FoodCard_1.default onTap={onTapFood} item={(0, utils_1.checkExistence)(item, Cart)} onUpdateCart={props.onUpdateCart}/>} keyExtractor={(item) => `${item._id}`}/>
+                    <react_native_gesture_handler_1.FlatList showsHorizontalScrollIndicator={true} data={Cart} renderItem={({ item }) => <FoodCard_1.default onTap={onTapFood} item={(0, utils_1.checkExistence)(item, Cart)} onUpdateCart={props.onUpdateCart}/>} keyExtractor={(item) => `${item._id}`} ListFooterComponent={footerContent}/>
                 </react_native_1.View>
                 <react_native_1.View style={styles.footer}>
                     <react_native_1.View style={styles.amountView}>
                         <react_native_1.Text style={{ fontSize: 10 }}>
                             Total
                         </react_native_1.Text>
-                        <react_native_1.Text style={{ fontSize: 10 }}>{totalAmount}</react_native_1.Text>
+                        <react_native_1.Text style={{ fontSize: 10 }}>{payableAmount}</react_native_1.Text>
                     </react_native_1.View>
-                    <ButtonWithTitle_1.default title={'Order Now'} onTap={onValidateOrder} height={50} width={320}/>
+                    <ButtonWithTitle_1.default title={'Make Payment'} onTap={onValidateOrder} height={50} width={320}/>
                 </react_native_1.View>
                 {popupView()}
-          </react_native_1.View>);
+            </react_native_1.View>);
     }
     else {
         return (<react_native_1.View style={styles.container}>
@@ -169,8 +244,8 @@ const _CartScreen = (props) => {
                         // go to the order details page
                         navigate('OrderPage');
                     }}>
-                              <react_native_1.Image source={require('../images/orders.png')} style={{ width: 50, height: 50 }}/>
-                          </react_native_gesture_handler_1.TouchableOpacity>}
+                                <react_native_1.Image source={require('../images/orders.png')} style={{ width: 50, height: 50 }}/>
+                            </react_native_gesture_handler_1.TouchableOpacity>}
                     </react_native_1.View>
                 </react_native_1.View>
                 <react_native_1.View style={styles.body}>
@@ -244,13 +319,26 @@ const styles = react_native_1.StyleSheet.create({
     icon: {
         width: 115,
         height: 50
+    },
+    row: {
+        backgroundColor: '#fff',
+        justifyContent: 'space-around',
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 10,
+        borderColor: '#d3d3d3',
+        borderWidth: 1,
+        marginLeft: 10,
+        marginRight: 10,
+        borderRadius: 10,
+        marginBottom: 15
     }
 });
 const mapStateToProps = (state) => ({
     shoppingReducer: state.shoppingReducer,
     userReducer: state.userReducer
 });
-const CartScreen = (0, react_redux_1.connect)(mapStateToProps, { onUpdateCart: actions_1.onUpdateCart, onCreateOrder: actions_1.onCreateOrder })(_CartScreen);
+const CartScreen = (0, react_redux_1.connect)(mapStateToProps, { onUpdateCart: actions_1.onUpdateCart, onCreateOrder: actions_1.onCreateOrder, onApplyOffer: actions_1.onApplyOffer })(_CartScreen);
 exports.CartScreen = CartScreen;
-// 8:23
+// 8:23 
 //# sourceMappingURL=CartScreen.js.map

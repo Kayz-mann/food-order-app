@@ -36,11 +36,13 @@ const react_native_1 = require("react-native");
 const Location = __importStar(require("expo-location"));
 const utils_1 = require("../utils");
 const react_2 = __importDefault(require("react"));
-const LandingScreen = () => {
+const ButtonWithIcon_1 = __importDefault(require("../components/Button/ButtonWithIcon"));
+const LocationScreen = () => {
     const [errorMsg, setErrorMsg] = (0, react_1.useState)('');
     const [address, setAddress] = (0, react_1.useState)();
     const [displayAddress, setDisplayAddress] = (0, react_1.useState)('Waiting for current location');
     const { navigate } = (0, utils_1.useNavigation)();
+    const [isMap, setIsMap] = (0, react_1.useState)(false);
     // const { userReducer, onUpdateLocation }  = props;
     const showAlert = (title, msg) => {
         react_native_1.Alert.alert(title, msg, [{
@@ -86,20 +88,33 @@ const LandingScreen = () => {
     (0, react_1.useEffect)(() => {
         accessDeviceLocation();
     });
-    return (<react_native_1.View style={styles.container}>
-            <react_native_1.View style={styles.navigation}>
-                <react_native_1.View style={styles.body}>
-                    <react_native_1.Image source={require('../images/delivery_icon.png')} style={styles.deliveryIcon}/>
-                    <react_native_1.View style={styles.addressContainer}>
-                        <react_native_1.Text style={styles.addressTitle}> Your Delivery Address</react_native_1.Text>
+    const pickLocationView = () => {
+        return (<react_native_1.View style={styles.container}>
+                <react_native_1.View style={{ flex: 1, display: 'flex', justifyContent: 'flex-start', flexDirection: 'row', marginTop: 44, marginLeft: 5 }}>
+                    <ButtonWithIcon_1.default icon={require('../images/back_arrow.png')} onTap={() => navigate('HomePage')} width={40} height={50}/>
+                    <react_native_1.View style={{ display: 'flex', flex: 1, marginRight: 5 }}>
+                        <react_native_1.Text>Input</react_native_1.Text>
                     </react_native_1.View>
-                    <react_native_1.Text style={styles.addressTitle}>{displayAddress}</react_native_1.Text>
                 </react_native_1.View>
-            </react_native_1.View>
-           <react_native_1.View style={styles.footer}/>
-        </react_native_1.View>);
+                <react_native_1.View style={styles.centerMsg}>
+                    <react_native_1.Image source={require(`../images/delivery_icon.png`)} style={styles.deliveryIcon}/>
+                    <react_native_1.Text style={styles.addressTitle}>Pick your Location</react_native_1.Text>
+                </react_native_1.View>
+            </react_native_1.View>);
+    };
+    const mapView = () => {
+        return (<react_native_1.View style={styles.container}>
+                    <react_native_1.Text>Map View</react_native_1.Text>
+                </react_native_1.View>);
+    };
+    if (isMap) {
+        return mapView();
+    }
+    else {
+        return pickLocationView();
+    }
 };
-exports.default = LandingScreen;
+exports.default = LocationScreen;
 const styles = react_native_1.StyleSheet.create({
     container: {
         flex: 1,
@@ -117,6 +132,13 @@ const styles = react_native_1.StyleSheet.create({
     footer: {
         flex: 1,
         backgroundColor: 'cyan'
+    },
+    centerMsg: {
+        left: '50%',
+        top: '50%',
+        position: 'absolute',
+        marginLeft: -80,
+        marginTop: -50
     },
     deliveryIcon: {
         width: 120,
@@ -143,4 +165,4 @@ const styles = react_native_1.StyleSheet.create({
 });
 // const { addressContainer } = styles/// addressContainer
 // 20:26
-//# sourceMappingURL=LandingScreen.js.map
+//# sourceMappingURL=LocationScreen.js.map

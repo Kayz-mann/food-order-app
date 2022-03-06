@@ -25,109 +25,23 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.OrderScreen = void 0;
 const react_1 = __importStar(require("react"));
 const react_native_1 = require("react-native");
-const react_native_gesture_handler_1 = require("react-native-gesture-handler");
 const react_redux_1 = require("react-redux");
 const ButtonWithIcon_1 = __importDefault(require("../components/Button/ButtonWithIcon"));
 const actions_1 = require("../redux/actions");
 const utils_1 = require("../utils");
-const react_native_raw_bottom_sheet_1 = __importDefault(require("react-native-raw-bottom-sheet"));
+const OrderCard_1 = __importDefault(require("../components/OrderCard"));
 const _OrderScreen = (props) => {
-    // const [isEditing, setIsEditing] = useState(false);
-    // const [keyword, setKeyword] = useState('');
-    const [totalAmount, setTotalAmount] = (0, react_1.useState)(0);
     const { goBack } = props.navigation;
-    // const { availableFoods } = props.shoppingReducer;
+    const { user, orders } = props.userReducer;
     const { navigate } = (0, utils_1.useNavigation)();
-    const { Cart, user, location, orders } = props.userReducer;
-    const popupRef = (0, react_1.createRef)();
-    // const onTapFood = (item: FoodModel) => {
-    //     navigate('FoodDetailPage', { food: item })
-    // };
+    console.log(`Available Orders ${JSON.stringify(orders)}`);
     (0, react_1.useEffect)(() => {
-        onCalculateAmount();
-    }, [Cart]);
-    const onCalculateAmount = () => {
-        let total = 0;
-        if (Array.isArray(Cart)) {
-            Cart.map(food => {
-                total += food.price + food.unit;
-            });
-        }
-        setTotalAmount(total);
+        (0, actions_1.onGetOrders)(user);
+    }, []);
+    const onTapOrder = (order) => {
+        navigate('OrderDetailPage', { order });
     };
-    // const onValidateOrder = () => {
-    //     if (user !== undefined) {
-    //         if(!user.verfied){
-    //             // navigate to login page
-    //             navigate('LoginPage')
-    //             } else {
-    //                 // place order
-    //                 console.log('Now we can order')
-    //                 popupRef.current?.open();
-    //             }
-    //         } else {
-    //             navigate('LoginPage');
-    //         }
-    // }
-    // after the payment operation call place order
-    const onTapPlaceOrder = () => {
-        var _a;
-        props.onCreateOrder(Cart, user);
-        (_a = popupRef.current) === null || _a === void 0 ? void 0 : _a.close();
-    };
-    const popupView = () => {
-        return (<react_native_raw_bottom_sheet_1.default height={400} ref={popupRef} closeOnDragDown={true} closeOnPressMask={false} customStyles={{
-                wrapper: {
-                    backgroundColor: 'transparent'
-                },
-                draggableIcon: {
-                    backgroundColor: '#000'
-                },
-                container: {
-                    justifyContent: 'flex-start',
-                    alignItems: 'center'
-                }
-            }}>
-                <react_native_1.View style={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-around',
-                width: '100%',
-                backgroundColor: 'gray'
-            }}>
-                    <react_native_1.View style={styles.paymentView}>
-                    <react_native_1.Text style={{ fontSize: 20, fontWeight: '700' }}>
-                        Payable Amount
-                    </react_native_1.Text>
-                        <react_native_1.Text>NGN{totalAmount.toFixed(2)}</react_native_1.Text>
-                    </react_native_1.View>
-                    <react_native_1.View style={{ display: 'flex', height: 100, padding: 20, flexDirection: 'row' }}>
-                        <react_native_1.Image source={require('../images/delivery_icon.png')} style={{ width: 50, height: 50 }}/>
-                        <react_native_1.Text style={{ fontSize: 16, fontWeight: '600', marginBottom: 5 }}>Address Used to Delivery</react_native_1.Text>
-                        <react_native_1.Text style={{ fontSize: 16, color: '#666666', marginBottom: 5, width: react_native_1.Dimensions.get('screen').width - 60 }}>{`${location.name}, ${location.street}, ${location.postalCode}, ${location.city}`}</react_native_1.Text>
-                    </react_native_1.View>
-                    <react_native_gesture_handler_1.ScrollView horizontal={true}>
-                        <react_native_1.View style={styles.paymentOptions}>
-                            <react_native_gesture_handler_1.TouchableOpacity onPress={() => { }} style={styles.options}>
-                                <react_native_1.Image source={require('../images/call_icon.png')} style={styles.icon}/>
-                                {/* COD */}
-                                <react_native_1.Text style={{ fontSize: 16, fontWeight: '600', color: '#545252' }}>
-                                    Call On Delivery
-                                </react_native_1.Text>
-                            </react_native_gesture_handler_1.TouchableOpacity>
-                            <react_native_gesture_handler_1.TouchableOpacity onPress={() => onTapPlaceOrder()} style={styles.options}>
-                                <react_native_1.Image source={require('../images/cart_icon.png')} style={styles.icon}/>
-                                {/* Card */}
-                                <react_native_1.Text style={{ fontSize: 16, fontWeight: '600', color: '#545252' }}>Card Payment</react_native_1.Text>
-                            </react_native_gesture_handler_1.TouchableOpacity>
-                         </react_native_1.View>
-                    </react_native_gesture_handler_1.ScrollView>
-
-                </react_native_1.View>
-
-            </react_native_raw_bottom_sheet_1.default>);
-    };
-    if (orders.length > 0) {
+    const orderView = () => {
         return (<react_native_1.View style={styles.container}>
                 <react_native_1.View style={styles.navigation}>
                     <react_native_1.View style={{ display: 'flex', height: 60, justifyContent: 'flex-start', flexDirection: 'row', alignItems: 'center', marginLeft: 4, paddingLeft: 20, paddingRight: 20 }}>
@@ -136,48 +50,31 @@ const _OrderScreen = (props) => {
                     </react_native_1.View>
                 </react_native_1.View>
                 <react_native_1.View style={styles.body}>
-                    {/* <FlatList
-                showsHorizontalScrollIndicator={true}
-                data={Cart}
-                renderItem={({ item }) => <FoodCard
-                    onTap={onTapFood}
-                    item={checkExistence(item, Cart)}
-                    onUpdateCart={props.onUpdateCart}
-                    
-                />
-                }
-                keyExtractor={(item) => `${item._id}`}
-            /> */}
+                    <react_native_1.FlatList showsVerticalScrollIndicator={false} data={orders} renderItem={({ item }) => <OrderCard_1.default item={item} onTap={() => onTapOrder(item)}/>} keyExtractor={(item) => `${item._id}`}/>
                 </react_native_1.View>
                 <react_native_1.View style={styles.footer}>
                     
                 </react_native_1.View>
-          </react_native_1.View>);
+            </react_native_1.View>);
+    };
+    if (orders.length > 0) {
+        return orderView();
     }
     else {
         return (<react_native_1.View style={styles.container}>
                 <react_native_1.View style={styles.navigation}>
                     <react_native_1.View style={{ display: 'flex', height: 60, justifyContent: 'space-around', flexDirection: 'row', alignItems: 'center', marginLeft: 4, paddingLeft: 20, paddingRight: 20 }}>
-                        <react_native_1.Text style={{ fontSize: 18, fontWeight: '600' }}>Orders</react_native_1.Text>
-                        {user !== undefined &&
-                <react_native_gesture_handler_1.TouchableOpacity style={{ alignItems: 'center' }} onPress={() => {
-                        // go to the order details page
-                    }}>
-                              <react_native_1.Image source={require('../images/orders.png')} style={{ width: 50, height: 50 }}/>
-                          </react_native_gesture_handler_1.TouchableOpacity>}
+
+                        <ButtonWithIcon_1.default icon={require('../images/back_arrow.png')} onTap={() => goBack()} width={32} height={38}></ButtonWithIcon_1.default>
+                        <react_native_1.Text style={{ fontSize: 22, fontWeight: '600' }}>Orders</react_native_1.Text>
+
                     </react_native_1.View>
                 </react_native_1.View>
                 <react_native_1.View style={styles.body}>
                     <react_native_1.Text style={{ fontSize: 25, fontWeight: '600' }}>Your Order is Empty</react_native_1.Text>
                 </react_native_1.View>
 
-            </react_native_1.View>
-        // <View style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        //     <Text style={{ fontSize: 25, fontWeight: '700' }}>
-        //         Your cart is empty!
-        //     </Text>
-        // </View>
-        );
+            </react_native_1.View>);
     }
 };
 const styles = react_native_1.StyleSheet.create({
@@ -241,10 +138,9 @@ const styles = react_native_1.StyleSheet.create({
     }
 });
 const mapStateToProps = (state) => ({
-    shoppingReducer: state.shoppingReducer,
     userReducer: state.userReducer
 });
-const OrderScreen = (0, react_redux_1.connect)(mapStateToProps, { onUpdateCart: actions_1.onUpdateCart, onCreateOrder: actions_1.onCreateOrder })(_OrderScreen);
+const OrderScreen = (0, react_redux_1.connect)(mapStateToProps, { onGetOrders: actions_1.onGetOrders })(_OrderScreen);
 exports.OrderScreen = OrderScreen;
 // 8:23
 //# sourceMappingURL=OrderScreen.js.map

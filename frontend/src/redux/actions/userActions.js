@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.onCreateOrder = exports.onOTPRequest = exports.onVerifyOTP = exports.onUserSignup = exports.onUserLogin = exports.onUpdateCart = exports.onUpdateLocation = void 0;
+exports.onApplyOffer = exports.onUserLogout = exports.onCancelOrder = exports.onGetOrders = exports.onCreateOrder = exports.onOTPRequest = exports.onVerifyOTP = exports.onUserSignup = exports.onUserLogin = exports.onUpdateCart = exports.onUpdateLocation = void 0;
 const axios_1 = __importDefault(require("axios"));
 const utils_1 = require("../../utils");
 const async_storage_1 = __importDefault(require("@react-native-community/async-storage"));
@@ -204,4 +204,95 @@ const onCreateOrder = (cartItems, user) => {
     });
 };
 exports.onCreateOrder = onCreateOrder;
+const onGetOrders = (user) => {
+    return (dispatch) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            axios_1.default.defaults.headers.common['Authorization'] = `Bearer ${user.token}`;
+            const response = yield axios_1.default.get(`${utils_1.BASE_URL}/user/order`);
+            console.log(response);
+            if (!response) {
+                dispatch({
+                    type: 'ON_USER_ERROR',
+                    payload: 'Create Order Failed'
+                });
+            }
+            else {
+                // save location in local storage
+                dispatch({
+                    type: 'ON_VIEW_ORDER',
+                    payload: response.data
+                });
+            }
+        }
+        catch (error) {
+            dispatch({
+                type: 'ON_USER_ERROR',
+                payload: error
+            });
+        }
+    });
+};
+exports.onGetOrders = onGetOrders;
+const onCancelOrder = (order, user) => {
+    return (dispatch) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            axios_1.default.defaults.headers.common['Authorization'] = `Bearer ${user.token}`;
+            const response = yield axios_1.default.get(`${utils_1.BASE_URL}/user/order`);
+            console.log(response);
+            if (!response) {
+                dispatch({
+                    type: 'ON_USER_ERROR',
+                    payload: 'Create Order Failed'
+                });
+            }
+            else {
+                // save location in local storage
+                dispatch({
+                    type: 'ON_CANCEL_ORDER',
+                    payload: response.data
+                });
+            }
+        }
+        catch (error) {
+            dispatch({
+                type: 'ON_USER_ERROR',
+                payload: error
+            });
+        }
+    });
+};
+exports.onCancelOrder = onCancelOrder;
+const onUserLogout = () => {
+    return (dispatch) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            dispatch({
+                type: 'ON_USER_LOGOUT'
+            });
+        }
+        catch (error) {
+            dispatch({
+                type: 'ON_USER_ERROR',
+                payload: error
+            });
+        }
+    });
+};
+exports.onUserLogout = onUserLogout;
+const onApplyOffer = (offer, isRemove) => {
+    return (dispatch) => __awaiter(void 0, void 0, void 0, function* () {
+        if (isRemove) {
+            dispatch({
+                type: 'ON_REMOVE_OFFER',
+                payload: offer
+            });
+        }
+        else {
+            dispatch({
+                type: 'ON_ADD_OFFER',
+                payload: offer
+            });
+        }
+    });
+};
+exports.onApplyOffer = onApplyOffer;
 //# sourceMappingURL=userActions.js.map

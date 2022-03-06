@@ -1,9 +1,18 @@
 import axios from 'axios'
 import { Address } from 'expo-location';
 import { Dispatch } from 'react';
-import { BASE_URL } from '../../utils';
+import { BASE_URL, MAP_API_KEY } from '../../utils';
 import AsyncStorage from '@react-native-community/async-storage';
-import { FoodModel, OfferModel, OrderModel, UserModel } from '../model';
+import { FoodModel, OfferModel, OrderModel, PickedAddress, PickedLocationResult, UserModel } from '../model';
+
+export interface UserAddress {
+    displayAddress: string,
+    postalCode: string,
+    city: string,
+    country: string,
+    latitude?: number,
+    longitude?: number
+}
 
 
 export interface UpdateLocationAction{
@@ -57,9 +66,14 @@ export interface AddRemoveOfferAction {
     payload: OfferModel
 }
 
+export interface onFetchLocationAction {
+    readonly type: 'ON_FETCH_LOCATION',
+    payload: PickedAddress
+}
 
 
-export type UserAction = UpdateLocationAction | UserErrorAction | UpdateCartAction | UserLoginAction | CreateOrderAction | ViewOrdersAction | CancelOrdersAction | UserLogoutAction | AddRemoveOfferAction;
+
+export type UserAction = UpdateLocationAction | UserErrorAction | UpdateCartAction | UserLoginAction | CreateOrderAction | ViewOrdersAction | CancelOrdersAction | UserLogoutAction | AddRemoveOfferAction | onFetchLocationAction;
 
 
 // User Actions trigger from Components
@@ -350,6 +364,41 @@ export const onApplyOffer = (offer: OfferModel, isRemove: boolean) => {
             dispatch({
                 type: 'ON_ADD_OFFER',
                 payload: offer
+            })
+        }
+    }
+}
+
+
+export const onFetchLocation = (lng: string, lat: string) => {
+    return async (dispatch: Dispatch<UserAction>) => {
+        try {
+            const response = await axios.get<PickedLocationResult>(`https://maps.googleapis.com/maps/api/geocode/json?address=${lat},${lng}&key=${MAP_API_KEY}`)
+
+            console.log(response)
+
+            if (!response) {
+                dispatch({
+                    type: 'ON_USER_ERROR',
+                    payload: 'Address Fetching Error'
+                })
+            } else {
+                const { results } = response.data;
+
+                if (Array.isArray(results) && results.length > 0) {
+                    const pickedAddress = results[0]
+                    dispatch({
+                        type: 'ON_FETCH_LOCATION',
+                        payload: pickedAddress
+                    })
+                }
+  
+            }
+            
+        } catch(error) {
+            dispatch({
+                type: 'ON_USER_ERROR',
+                payload: error
             })
         }
     }

@@ -209,7 +209,8 @@ const _CartScreen: React.FC<CartScreenProps> = (props) => {
                             style={{ width: 50, height: 50 }}
                         />
                         <Text style={{ fontSize: 16, fontWeight: '600', marginBottom: 5 }}>Address Used to Delivery</Text>
-                        <Text style={{ fontSize: 16, color: '#666666', marginBottom: 5, width: Dimensions.get('screen').width - 60 }}>{`${location.name}, ${location.street}, ${location.postalCode}, ${location.city}`}</Text>
+                        {/* <Text style={{ fontSize: 16, color: '#666666', marginBottom: 5, width: Dimensions.get('screen').width - 60 }}>{`${location.name}, ${location.street}, ${location.postalCode}, ${location.city}`}</Text> */}
+                        <Text style={{ fontSize: 16, color: '#666666', marginBottom: 5, width: Dimensions.get('screen').width - 60 }}>{`${location.displayAddress}`}</Text>
                     </View>
                     <ScrollView horizontal={true}>
                         <View style={styles.paymentOptions}>
