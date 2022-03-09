@@ -1,4 +1,5 @@
-import { Address } from 'expo-location'
+// import { LocationGeocodedAddress } from 'expo-location'
+import { Address } from 'react-native-maps';
 
 
 // category

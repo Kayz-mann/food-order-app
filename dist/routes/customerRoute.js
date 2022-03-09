@@ -38,4 +38,5 @@ router.post('/offer', controllers_1.addOffer);
 router.put('/offer/:id', controllers_1.editOffer);
 // Payment
 router.post('/create-payment', controllers_1.createPayment);
+router.post('/create-payment-intent', controllers_1.makePayment);
 //# sourceMappingURL=customerRoute.js.map

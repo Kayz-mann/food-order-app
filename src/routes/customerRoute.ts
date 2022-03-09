@@ -1,5 +1,5 @@
 import express from 'express';
-import { addOffer, addToCart, createOrder, createPayment, customerLogin, customerSignUp, customerVerify, deleteCart, editCustomerProfile, editOffer, getCart, getCustomerProfile, getOffers, getOrder, getOrderById, requestOtp, verifyOffer } from '../controllers';
+import { addOffer, addToCart, createOrder, createPayment, customerLogin, customerSignUp, customerVerify, deleteCart, editCustomerProfile, editOffer, getCart, getCustomerProfile, getOffers, getOrder, getOrderById, makePayment, requestOtp, verifyOffer } from '../controllers';
 import { authenticate } from '../middlewares/commonAuth';
 
 const router = express.Router();
@@ -46,5 +46,6 @@ router.put('/offer/:id', editOffer);
 
 // Payment
 router.post('/create-payment', createPayment);
+router.post('/create-payment-intent', makePayment);
 
 export { router as customerRoute };

@@ -5,7 +5,7 @@ import * as Location from 'expo-location';
 import { useNavigation } from '../utils'
 import React from 'react';
 import { UserState } from '../redux/model';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { onUpdateLocation } from '../redux/actions';
 
 // const screenWidth = Dimensions.get('screen').width;
@@ -17,7 +17,7 @@ interface LandingProps{
 
 const LandingScreen: React.FC<LandingProps> = (props) => {
     const [errorMsg, setErrorMsg] = useState('');
-    const [address, setAddress] = useState<Location.Address>();
+    const [address, setAddress] = useState<Location.LocationGeocodedAddress>();
     const [displayAddress, setDisplayAddress] = useState('Waiting for current location');
     const { navigate } = useNavigation();
     const { userReducer, onUpdateLocation } = props;
@@ -40,7 +40,7 @@ const LandingScreen: React.FC<LandingProps> = (props) => {
 
     const accessDeviceLocation = async () => {
         try {
-            let { status }: any = await Location.requestPermissionsAsync();
+            let { status }: any = await Location.requestForegroundPermissionsAsync();
     
             if (status !== 'granted') {
                 showAlert('Location Permission Needed!', 'Location Permission needed to access your nearest restaurants!');

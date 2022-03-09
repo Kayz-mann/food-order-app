@@ -7,7 +7,8 @@ const initialState = {
     error: undefined,
     Cart: {},
     orders: {},
-    appliedOffer: {}
+    appliedOffer: {},
+    pickedAddress: {}
 };
 const UserReducer = (state = initialState, action) => {
     // const { type, payload } = action;
@@ -50,6 +51,8 @@ const UserReducer = (state = initialState, action) => {
             return Object.assign(Object.assign({}, state), { appliedOffer: action.payload });
         case 'ON_REMOVE_OFFER':
             return Object.assign(Object.assign({}, state), { appliedOffer: {} });
+        case 'ON_FETCH_LOCATION':
+            return Object.assign(Object.assign({}, state), { pickedAddress: action.payload });
         default:
             return state;
     }

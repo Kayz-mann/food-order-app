@@ -3,6 +3,7 @@ import { Image, StyleSheet, View } from 'react-native';
 import { createAppContainer} from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
+import { StripeProvider } from '@stripe/stripe-react-native';
 
 import { HomeScreen } from './src/screens/HomeScreen';
 import LandingScreen from './src/screens/LandingScreen';
@@ -16,6 +17,8 @@ import { OrderDetailScreen } from './src/screens/OrderDetailScreen';
 import { AccountScreen } from './src/screens/AccountScreen';
 import { OfferScreen } from './src/screens/OfferScreen';
 import {LocationScreen} from './src/screens/LocationScreen';
+import { PUBLISHABLE_KEY } from './config';
+
 
 
 
@@ -116,7 +119,15 @@ const AppNavigation = createAppContainer(switchNavigator);
 export default function App() {
   return (
     <View style={styles.container}>
-       <AppNavigation />
+      <StripeProvider
+        publishableKey= {PUBLISHABLE_KEY}
+        merchantIdentifier='com.kayzmann.online_store_app'
+        threeDSecureParams={{
+        backgroundColor: '#FFF',
+        timeout: 3
+      }}>
+        <AppNavigation />
+      </StripeProvider>
     </View>
   );
 }

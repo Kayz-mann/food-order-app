@@ -19,12 +19,12 @@ const OrderScreen_1 = require("./src/screens/OrderScreen");
 const OrderDetailScreen_1 = require("./src/screens/OrderDetailScreen");
 const AccountScreen_1 = require("./src/screens/AccountScreen");
 const OfferScreen_1 = require("./src/screens/OfferScreen");
-const LocationScreen_1 = __importDefault(require("./src/screens/LocationScreen"));
+const LocationScreen_1 = require("./src/screens/LocationScreen");
 const switchNavigator = (0, react_navigation_stack_1.createStackNavigator)({
     landingStack: {
         screen: (0, react_navigation_stack_1.createStackNavigator)({
             Landing: LandingScreen_1.default,
-            LocationPage: LocationScreen_1.default
+            LocationPage: LocationScreen_1.LocationScreen
         }, {
             defaultNavigationOptions: {
                 headerShown: false
@@ -37,7 +37,8 @@ const switchNavigator = (0, react_navigation_stack_1.createStackNavigator)({
                 Homepage: HomeScreen_1.HomeScreen,
                 SearchPage: SearchScreen_1.SearchScreen,
                 RestaurantPage: RestaurantScreen_1.RestaurantScreen,
-                FoodDetailPage: FoodDetailScreen_1.FoodDetailScreen
+                FoodDetailPage: FoodDetailScreen_1.FoodDetailScreen,
+                LocationPage: LocationScreen_1.LocationScreen
             }),
             navigationOptions: {
                 tabBarIcon: ({ focused, tintColor }) => {

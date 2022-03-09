@@ -36,11 +36,14 @@ const react_native_1 = require("react-native");
 const Location = __importStar(require("expo-location"));
 const utils_1 = require("../utils");
 const react_2 = __importDefault(require("react"));
-const LandingScreen = () => {
+const async_storage_1 = __importDefault(require("@react-native-async-storage/async-storage"));
+const LandingScreen = (props) => {
     const [errorMsg, setErrorMsg] = (0, react_1.useState)('');
     const [address, setAddress] = (0, react_1.useState)();
     const [displayAddress, setDisplayAddress] = (0, react_1.useState)('Waiting for current location');
     const { navigate } = (0, utils_1.useNavigation)();
+    const { userReducer, onUpdateLocation } = props;
+    // const { location: { displayAddress } } = userReducer;
     // const { userReducer, onUpdateLocation }  = props;
     const showAlert = (title, msg) => {
         react_native_1.Alert.alert(title, msg, [{
@@ -52,7 +55,7 @@ const LandingScreen = () => {
     };
     const accessDeviceLocation = () => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            let { status } = yield Location.requestPermissionsAsync();
+            let { status } = yield Location.requestForegroundPermissionsAsync();
             if (status !== 'granted') {
                 showAlert('Location Permission Needed!', 'Location Permission needed to access your nearest restaurants!');
                 return;
@@ -63,8 +66,15 @@ const LandingScreen = () => {
                 const { latitude, longitude } = coords;
                 let addressResponse = yield Location.reverseGeocodeAsync({ latitude, longitude });
                 for (let item of addressResponse) {
-                    setAddress(item);
                     let currentAddress = `${item.name}, ${item.street}, ${item.postalCode}, ${item.country}`;
+                    const { country, city, postalCode } = item;
+                    setAddress(item);
+                    onUpdateLocation({
+                        displayAddress: currentAddress,
+                        postalCode,
+                        city,
+                        country,
+                    });
                     setDisplayAddress(currentAddress);
                     if (currentAddress.length > 0) {
                         setTimeout(() => {
@@ -83,8 +93,27 @@ const LandingScreen = () => {
             showAlert('Location Permission Needed!', 'Location Permission needed to access your nearest restaurants!');
         }
     });
+    const checkExistingLocation = () => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const locationData = yield async_storage_1.default.getItem('user_location');
+            console.log(locationData);
+            if (locationData !== null) {
+                const saveAddress = JSON.parse(locationData);
+                props.onUpdateLocation(saveAddress);
+                setTimeout(() => {
+                    navigate('homeStack');
+                }, 2000);
+            }
+            else {
+                yield accessDeviceLocation();
+            }
+        }
+        catch (err) {
+            console.log(err);
+        }
+    });
     (0, react_1.useEffect)(() => {
-        accessDeviceLocation();
+        checkExistingLocation();
     });
     return (<react_native_1.View style={styles.container}>
             <react_native_1.View style={styles.navigation}>

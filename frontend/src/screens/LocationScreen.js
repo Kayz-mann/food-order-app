@@ -1,99 +1,91 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.LocationScreen = void 0;
 const react_1 = require("react");
 const react_native_1 = require("react-native");
-const Location = __importStar(require("expo-location"));
 const utils_1 = require("../utils");
 const react_2 = __importDefault(require("react"));
 const ButtonWithIcon_1 = __importDefault(require("../components/Button/ButtonWithIcon"));
-const LocationScreen = () => {
+const LocationPicker_1 = __importDefault(require("../components/LocationPicker"));
+const ButtonWithTitle_1 = __importDefault(require("../components/Button/ButtonWithTitle"));
+const LocationMapPicker_1 = __importDefault(require("../components/LocationMapPicker"));
+const react_redux_1 = require("react-redux");
+const userActions_1 = require("../redux/actions/userActions");
+const _LocationScreen = (props) => {
     const [errorMsg, setErrorMsg] = (0, react_1.useState)('');
-    const [address, setAddress] = (0, react_1.useState)();
     const [displayAddress, setDisplayAddress] = (0, react_1.useState)('Waiting for current location');
     const { navigate } = (0, utils_1.useNavigation)();
     const [isMap, setIsMap] = (0, react_1.useState)(false);
-    // const { userReducer, onUpdateLocation }  = props;
-    const showAlert = (title, msg) => {
-        react_native_1.Alert.alert(title, msg, [{
-                text: 'Ok', onPress: () => {
-                    // navigate to manual add location
-                    navigate('LocationPage');
-                }
-            }]);
-    };
-    const accessDeviceLocation = () => __awaiter(void 0, void 0, void 0, function* () {
-        try {
-            let { status } = yield Location.requestPermissionsAsync();
-            if (status !== 'granted') {
-                showAlert('Location Permission Needed!', 'Location Permission needed to access your nearest restaurants!');
-                return;
-            }
-            let location = yield Location.getCurrentPositionAsync();
-            const { coords } = location;
-            if (coords) {
-                const { latitude, longitude } = coords;
-                let addressResponse = yield Location.reverseGeocodeAsync({ latitude, longitude });
-                for (let item of addressResponse) {
-                    setAddress(item);
-                    let currentAddress = `${item.name}, ${item.street}, ${item.postalCode}, ${item.country}`;
-                    setDisplayAddress(currentAddress);
-                    if (currentAddress.length > 0) {
-                        setTimeout(() => {
-                            navigate('homeStack');
-                        }, 3000);
-                    }
-                    return;
-                }
-            }
-            else {
-                // notify something went wrong with location
-                showAlert('Location Permission Needed!', 'Location Permission needed to access your nearest restaurants!');
-            }
-        }
-        catch (err) {
-            showAlert('Location Permission Needed!', 'Location Permission needed to access your nearest restaurants!');
-        }
+    const { userReducer, onUpdateLocation } = props;
+    const [currentAddress, setCurrentAddress] = (0, react_1.useState)('Pick a location from map');
+    const [selectedAddress, setSelectedAddress] = (0, react_1.useState)();
+    const { pickedAddress } = userReducer;
+    const [region, setRegion] = (0, react_1.useState)({
+        latitude: 26.90,
+        longitude: 93.701,
+        longitudeDelta: 0.0421,
+        latitudeDelta: 0.0922
     });
     (0, react_1.useEffect)(() => {
-        accessDeviceLocation();
+        if (pickedAddress !== undefined) {
+            const { address_components } = pickedAddress;
+            if (Array.isArray(address_components)) {
+                setCurrentAddress(pickedAddress.formatted_address);
+                address_components.map(item => {
+                    let city = "";
+                    let country = "";
+                    let postalCode = "";
+                    if (item.types.filter(item => item === 'postal_code').length > 0) {
+                        postalCode = item.short_name;
+                    }
+                    if (item.types.filter(item => item === 'country').length > 0) {
+                        country = item.short_name;
+                    }
+                    if (item.types.filter(item => item === 'locality').length > 0) {
+                        city = item.short_name;
+                    }
+                    setSelectedAddress({
+                        displayAddress: pickedAddress.formatted_address,
+                        city,
+                        country,
+                        postalCode
+                    });
+                });
+            }
+        }
     });
+    // call when picked from auto complete
+    const onChangeLocation = (location) => {
+        console.log(location, 'Receiving Location from pick Location');
+        setRegion({
+            latitude: 26.90,
+            longitude: 93.701,
+            longitudeDelta: 0.0421,
+            latitudeDelta: 0.0922
+        });
+        setIsMap(true);
+    };
+    const onTapConfirmLocation = () => {
+        if ((selectedAddress === null || selectedAddress === void 0 ? void 0 : selectedAddress.postalCode) !== "") {
+            onUpdateLocation(selectedAddress);
+            navigate('HomePage');
+        }
+    };
+    // call when location is picked from a map
+    const onPickLocationFromMap = (newRegion) => {
+        setRegion(newRegion);
+        console.log(newRegion);
+        // fetch physical address for reverse Geo Code and display in bottom section
+    };
     const pickLocationView = () => {
         return (<react_native_1.View style={styles.container}>
                 <react_native_1.View style={{ flex: 1, display: 'flex', justifyContent: 'flex-start', flexDirection: 'row', marginTop: 44, marginLeft: 5 }}>
                     <ButtonWithIcon_1.default icon={require('../images/back_arrow.png')} onTap={() => navigate('HomePage')} width={40} height={50}/>
                     <react_native_1.View style={{ display: 'flex', flex: 1, marginRight: 5 }}>
-                        <react_native_1.Text>Input</react_native_1.Text>
+                        <LocationPicker_1.default onChangeLocation={onChangeLocation}/>
                     </react_native_1.View>
                 </react_native_1.View>
                 <react_native_1.View style={styles.centerMsg}>
@@ -104,7 +96,26 @@ const LocationScreen = () => {
     };
     const mapView = () => {
         return (<react_native_1.View style={styles.container}>
-                    <react_native_1.Text>Map View</react_native_1.Text>
+                    <react_native_1.View style={styles.navigation}>
+                        <react_native_1.View style={{ display: 'flex', height: 60, justifyContent: 'flex-start', flexDirection: 'row', alignItems: 'center', marginTop: 4, paddingLeft: 10 }}>
+                            <ButtonWithIcon_1.default icon={require('../images/back_arrow.png')} onTap={() => navigate('Homepage')} width={30} height={30}/>
+                            <react_native_1.View style={{ flex: 1, marginLeft: 20 }}>
+                                <react_native_1.Text style={{ fontSize: 18, fontWeight: '500', color: '#656565' }}>Pick your Location from Map</react_native_1.Text>
+                            </react_native_1.View>
+                        </react_native_1.View>
+                    </react_native_1.View>
+                    <react_native_1.View style={styles.body}>
+                        <LocationMapPicker_1.default lastLocation={region} onMarkerChanged={onPickLocationFromMap}/>
+                    </react_native_1.View>
+                    <react_native_1.View style={styles.footer}>
+                        <react_native_1.View style={{ flex: 1, backgroundColor: 'white', padding: 10, paddingLeft: 20, paddingRight: 20 }}>
+                            <react_native_1.Text style={{ fontSize: 18, fontWeight: '500', color: '#545454' }}>
+                                {currentAddress}
+                            </react_native_1.Text>
+                            <ButtonWithTitle_1.default title="Confirm" onTap={onTapConfirmLocation} width={320} height={50}/>
+                        </react_native_1.View>
+                    </react_native_1.View>
+                    
                 </react_native_1.View>);
     };
     if (isMap) {
@@ -114,23 +125,25 @@ const LocationScreen = () => {
         return pickLocationView();
     }
 };
-exports.default = LocationScreen;
+const mapStateToProps = (state) => ({
+    userReducer: state.userReducer
+});
+const LocationScreen = (0, react_redux_1.connect)(mapStateToProps, { onUpdateLocation: userActions_1.onUpdateLocation })(_LocationScreen);
+exports.LocationScreen = LocationScreen;
 const styles = react_native_1.StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: 'rgba(242,242,242,17)'
     },
     navigation: {
-        flex: 2,
-        backgroundColor: 'red'
+        flex: 1,
+        marginTop: 44
     },
     body: {
-        flex: 0,
-        justifyContent: 'center',
-        alignItems: 'center',
+        flex: 7.5,
     },
     footer: {
-        flex: 1,
+        flex: 2.0,
         backgroundColor: 'cyan'
     },
     centerMsg: {
@@ -164,5 +177,5 @@ const styles = react_native_1.StyleSheet.create({
     }
 });
 // const { addressContainer } = styles/// addressContainer
-// 20:26
+// 16:53
 //# sourceMappingURL=LocationScreen.js.map

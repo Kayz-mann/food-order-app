@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createPayment = exports.verifyOffer = exports.getOrderById = exports.getOrder = exports.createOrder = exports.deleteCart = exports.getCart = exports.addToCart = exports.editCustomerProfile = exports.getCustomerProfile = exports.requestOtp = exports.customerVerify = exports.customerLogin = exports.customerSignUp = void 0;
+exports.makePayment = exports.createPayment = exports.verifyOffer = exports.getOrderById = exports.getOrder = exports.createOrder = exports.deleteCart = exports.getCart = exports.addToCart = exports.editCustomerProfile = exports.getCustomerProfile = exports.requestOtp = exports.customerVerify = exports.customerLogin = exports.customerSignUp = void 0;
 const class_transformer_1 = require("class-transformer");
 const class_validator_1 = require("class-validator");
 const customer_dto_1 = require("../dto/customer.dto");
@@ -20,6 +20,10 @@ const order_1 = require("../models/order");
 const offer_1 = require("../models/offer");
 const transaction_1 = require("../models/transaction");
 const models_1 = require("../models");
+// import { PUBLISHABLE_KEY, SECRET_KEY } from '../'
+// var Publishable_Key = 
+// var Secret_Key = 'sk_test_51IWT7zGcjbyIRuKVRAiPu2edR0o12frqzo7pkwPhSL0T39VhDiPeaSj4ESTQE5dTUv4Jg2BAmAVf3teSwvgSFIQU00eEGZsJN7'
+// const stripe = require('stripe')(Secret_Key)
 const customerSignUp = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const customerInputs = (0, class_transformer_1.plainToClass)(customer_dto_1.CreateCustomerInputs, req.body);
     const inputErrors = yield (0, class_validator_1.validate)(customerInputs, { validationError: { target: true } });
@@ -401,4 +405,16 @@ const createPayment = (req, res, next) => __awaiter(void 0, void 0, void 0, func
     return res.status(200).json(transaction);
 });
 exports.createPayment = createPayment;
+const makePayment = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const { amount, currency } = req.body;
+    const payableAmount = parseInt(amount) + 100;
+    const paymentIntent = yield stripe.paymentIntents.create({
+        amount: payableAmount,
+        currency: currency
+    });
+    res.send({
+        clientSecret: paymentIntent.client_secret,
+    });
+});
+exports.makePayment = makePayment;
 //# sourceMappingURL=customerController.js.map

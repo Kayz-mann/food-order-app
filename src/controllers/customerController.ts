@@ -9,6 +9,13 @@ import { Order } from '../models/order';
 import { Offer } from '../models/offer';
 import { Transaction } from '../models/transaction';
 import { DeliveryUser, Vendor } from '../models';
+import { PUBLISHABLE_KEY, SECRET_KEY } from '../config';
+
+
+var Publishable_Key = PUBLISHABLE_KEY;
+var Secret_Key = SECRET_KEY;
+
+const stripe = require('stripe')(Secret_Key)
 
 
 export const customerSignUp = async (req: Request, res: Response, next: NextFunction) => {
@@ -468,5 +475,19 @@ export const createPayment = async (req: Request, res: Response, next: NextFunct
 
     // return transaction ID
     return res.status(200).json(transaction);
+}
+
+export const makePayment = async (req: Request, res: Response, next: NextFunction) => {
+    const { amount, currency } = req.body;
+
+    const payableAmount = parseInt(amount) + 100;
+    const paymentIntent = await stripe.paymentIntents.create({
+        amount: payableAmount,
+        currency: currency
+    });
+
+    res.send({
+        clientSecret: paymentIntent.client_secret,
+    });
 }
 

@@ -182,7 +182,8 @@ const _CartScreen = (props) => {
                     <react_native_1.View style={{ display: 'flex', height: 100, padding: 20, flexDirection: 'row' }}>
                         <react_native_1.Image source={require('../images/delivery_icon.png')} style={{ width: 50, height: 50 }}/>
                         <react_native_1.Text style={{ fontSize: 16, fontWeight: '600', marginBottom: 5 }}>Address Used to Delivery</react_native_1.Text>
-                        <react_native_1.Text style={{ fontSize: 16, color: '#666666', marginBottom: 5, width: react_native_1.Dimensions.get('screen').width - 60 }}>{`${location.name}, ${location.street}, ${location.postalCode}, ${location.city}`}</react_native_1.Text>
+                        {/* <Text style={{ fontSize: 16, color: '#666666', marginBottom: 5, width: Dimensions.get('screen').width - 60 }}>{`${location.name}, ${location.street}, ${location.postalCode}, ${location.city}`}</Text> */}
+                        <react_native_1.Text style={{ fontSize: 16, color: '#666666', marginBottom: 5, width: react_native_1.Dimensions.get('screen').width - 60 }}>{`${location.displayAddress}`}</react_native_1.Text>
                     </react_native_1.View>
                     <react_native_gesture_handler_1.ScrollView horizontal={true}>
                         <react_native_1.View style={styles.paymentOptions}>

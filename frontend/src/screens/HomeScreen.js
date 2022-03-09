@@ -43,7 +43,7 @@ const _HomeScreen = (props) => {
         setTimeout(() => {
             props.onSearchFoods(location.postalCode);
         }, 1000);
-    });
+    }, [, location]);
     const onTapRestaurant = (item) => {
         navigate('RestaurantPage', { restaurants: item });
     };
@@ -52,9 +52,11 @@ const _HomeScreen = (props) => {
     };
     return (<react_native_1.View style={styles.container}>
             <react_native_1.View style={styles.navigation}>
-                <react_native_1.View style={{ marginTop: 50, flex: 4, backgroundColor: 'white', paddingLeft: 20, paddingRight: 20 }}>
-                    <react_native_1.Text>{`${location.name}, ${location.street}, ${location.city}`}</react_native_1.Text>
-                    <react_native_1.Text>Edit</react_native_1.Text>
+                <react_native_1.View style={{ marginTop: 50, flex: 4, backgroundColor: 'white', paddingLeft: 30, paddingRight: 20, alignItems: 'center', justifyContent: 'flex-start' }}>
+                    <react_native_1.Image source={require('../images/delivery_icon.png')} style={{ width: 32, height: 32 }}/>
+                    {/* <Text>{`${location.name}, ${location.street}, ${location.city}`}</Text> */}
+                    <react_native_1.Text style={{ width: 280, marginRight: 5 }}>{`${location.displayAddress}`}</react_native_1.Text>
+                    <ButtonWithIcon_1.default onTap={() => { navigate('LocationPage'); }} icon={require('../images/edit_icon.png')} width={24} height={40}/>
                 </react_native_1.View>
                 <react_native_1.View style={{ height: 60, justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', paddingLeft: 4 }}>
                 <SearchBar_1.default didTouch={() => {

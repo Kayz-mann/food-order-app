@@ -1,9 +1,10 @@
 import axios from 'axios'
-import { Address } from 'expo-location';
+// import { Address } from 'expo-location';
 import { Dispatch } from 'react';
 import { BASE_URL, MAP_API_KEY } from '../../utils';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FoodModel, OfferModel, OrderModel, PickedAddress, PickedLocationResult, UserModel } from '../model';
+import { Address } from 'react-native-maps';
 
 export interface UserAddress {
     displayAddress: string,
@@ -238,7 +239,7 @@ export const onOTPRequest = (user: UserModel) => {
     }
 }
 
-export const onCreateOrder = (cartItems: [FoodModel], user: UserModel) => {
+export const onCreateOrder = (cartItems: [FoodModel], user: UserModel, paymentResponse: string) => {
     
     let cart = new Array();
     cartItems.map(item => {
@@ -248,7 +249,8 @@ export const onCreateOrder = (cartItems: [FoodModel], user: UserModel) => {
         try {
             axios.defaults.headers.common['Authorization'] = `Bearer ${user.token}`;
             const response = await axios.post<OrderModel>(`${BASE_URL}/user/create-order`, {
-                cart: cart
+                cart: cart,
+                paymentResponse
             })
 
             console.log(response)

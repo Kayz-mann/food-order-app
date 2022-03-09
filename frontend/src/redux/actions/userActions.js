@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.onApplyOffer = exports.onUserLogout = exports.onCancelOrder = exports.onGetOrders = exports.onCreateOrder = exports.onOTPRequest = exports.onVerifyOTP = exports.onUserSignup = exports.onUserLogin = exports.onUpdateCart = exports.onUpdateLocation = void 0;
+exports.onFetchLocation = exports.onApplyOffer = exports.onUserLogout = exports.onCancelOrder = exports.onGetOrders = exports.onCreateOrder = exports.onOTPRequest = exports.onVerifyOTP = exports.onUserSignup = exports.onUserLogin = exports.onUpdateCart = exports.onUpdateLocation = void 0;
 const axios_1 = __importDefault(require("axios"));
 const utils_1 = require("../../utils");
 const async_storage_1 = __importDefault(require("@react-native-community/async-storage"));
@@ -295,4 +295,35 @@ const onApplyOffer = (offer, isRemove) => {
     });
 };
 exports.onApplyOffer = onApplyOffer;
+const onFetchLocation = (lng, lat) => {
+    return (dispatch) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield axios_1.default.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${lat},${lng}&key=${utils_1.MAP_API_KEY}`);
+            console.log(response);
+            if (!response) {
+                dispatch({
+                    type: 'ON_USER_ERROR',
+                    payload: 'Address Fetching Error'
+                });
+            }
+            else {
+                const { results } = response.data;
+                if (Array.isArray(results) && results.length > 0) {
+                    const pickedAddress = results[0];
+                    dispatch({
+                        type: 'ON_FETCH_LOCATION',
+                        payload: pickedAddress
+                    });
+                }
+            }
+        }
+        catch (error) {
+            dispatch({
+                type: 'ON_USER_ERROR',
+                payload: error
+            });
+        }
+    });
+};
+exports.onFetchLocation = onFetchLocation;
 //# sourceMappingURL=userActions.js.map
