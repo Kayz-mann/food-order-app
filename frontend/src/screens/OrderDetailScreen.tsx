@@ -128,7 +128,7 @@ const _OrderDetailScreen: React.FC<OrderDetailScreenProps> = (props) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#2f2f2'
+        backgroundColor: '#f2f2f2'
     },
     navigation: {
         flex: 1,

@@ -1,9 +1,11 @@
 // import { StatusBar } from 'expo-status-bar';
+import React from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 import { createAppContainer} from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
-import { StripeProvider } from '@stripe/stripe-react-native';
+
+
 
 import { HomeScreen } from './src/screens/HomeScreen';
 import LandingScreen from './src/screens/LandingScreen';
@@ -18,6 +20,17 @@ import { AccountScreen } from './src/screens/AccountScreen';
 import { OfferScreen } from './src/screens/OfferScreen';
 import {LocationScreen} from './src/screens/LocationScreen';
 import { PUBLISHABLE_KEY } from './config';
+// import {StripeProvider}  from '@stripe/stripe-react-native';
+import { Provider } from 'react-redux';
+import { store } from './src/redux/store' 
+
+import { StripeProvider as _StripeProvider } from '@stripe/stripe-react-native';
+import type { Props as StripeProviderProps } from '@stripe/stripe-react-native/lib/typescript/src/components/StripeProvider'
+const StripeProvider = _StripeProvider as React.FC<StripeProviderProps>;
+
+
+
+
 
 
 
@@ -56,10 +69,10 @@ const switchNavigator = createStackNavigator({
     Offer: {
       screen: createStackNavigator({
         Offerpage: OfferScreen
-      },{
-          defaultNavigationOptions: {
-            headerShown: false
-          }
+      }, {
+        defaultNavigationOptions: {
+          headerShown: false
+        }
       }
       ),
       navigationOptions: {
@@ -82,7 +95,7 @@ const switchNavigator = createStackNavigator({
           defaultNavigationOptions: {
             headerShown: false
           }
-      }),
+        }),
       navigationOptions: {
         tabBarIcon: ({ focused, tintColor }) => {
           let icon = focused == true ? require('./src/images/cart_icon.png') : require('./src/images/cart_n_icon.png');
@@ -112,25 +125,34 @@ const switchNavigator = createStackNavigator({
       }
     },
   })
-})
+});
+
+interface AppProps {
+  props: any
+}
 
 const AppNavigation = createAppContainer(switchNavigator);
 
-export default function App() {
+export default function App(): JSX.Element | any {
   return (
-    <View style={styles.container}>
+ <>
+      <Provider store={store}>
       <StripeProvider
         publishableKey= {PUBLISHABLE_KEY}
         merchantIdentifier='com.kayzmann.online_store_app'
         threeDSecureParams={{
         backgroundColor: '#FFF',
-        timeout: 3
-      }}>
-        <AppNavigation />
-      </StripeProvider>
-    </View>
+          timeout: 3,
+
+        }}
+      >
+        {/* <AppNavigation /> */}
+        </StripeProvider>
+      </Provider>
+   </>
+
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {

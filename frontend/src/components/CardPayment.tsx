@@ -17,7 +17,7 @@ const CardPayment: React.FC<CardPaymentProps> = ({ onPaymentSuccess, onPaymentFa
     const { confirmPayment, loading } = useConfirmPayment();
 
     const initPayment = async() => {
-        const response = await axios.post('http://localhost:5000/create-paymen-intent', {
+        const response = await axios.post('https://kays-mart.herokuapp.com/create-paymen-intent', {
             amount,
             currency: 'NGN',
             paymentMethod: 'card'
@@ -106,7 +106,7 @@ const CardPayment: React.FC<CardPaymentProps> = ({ onPaymentSuccess, onPaymentFa
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#2f2f2'
+        backgroundColor: '#f2f2f2'
     },
     navigation: {
         flex: 1,

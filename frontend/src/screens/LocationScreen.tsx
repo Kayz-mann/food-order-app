@@ -224,7 +224,7 @@ const styles = StyleSheet.create({
     addressText: {
         fontSize: 20,
         fontWeight: '200',
-        colors: '#474747'
+        color: '#474747'
     }
 
 
