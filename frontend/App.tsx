@@ -4,11 +4,15 @@ import { Image, StyleSheet, View } from 'react-native';
 import { createAppContainer} from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
+import { Provider } from 'react-redux';
+import { StripeProvider as _StripeProvider } from '@stripe/stripe-react-native';
+import type { Props as StripeProviderProps } from '@stripe/stripe-react-native/lib/typescript/src/components/StripeProvider'
+const StripeProvider = _StripeProvider as React.FC<StripeProviderProps>;
 
 
 
 import { HomeScreen } from './src/screens/HomeScreen';
-import LandingScreen from './src/screens/LandingScreen';
+import {LandingScreen} from './src/screens/LandingScreen';
 import {RestaurantScreen} from './src/screens/RestaurantScreen';
 import {FoodDetailScreen} from './src/screens/FoodDetailScreen';
 import { SearchScreen } from './src/screens/SearchScreen';
@@ -20,13 +24,8 @@ import { AccountScreen } from './src/screens/AccountScreen';
 import { OfferScreen } from './src/screens/OfferScreen';
 import {LocationScreen} from './src/screens/LocationScreen';
 import { PUBLISHABLE_KEY } from './config';
-// import {StripeProvider}  from '@stripe/stripe-react-native';
-import { Provider } from 'react-redux';
 import { store } from './src/redux/store' 
 
-import { StripeProvider as _StripeProvider } from '@stripe/stripe-react-native';
-import type { Props as StripeProviderProps } from '@stripe/stripe-react-native/lib/typescript/src/components/StripeProvider'
-const StripeProvider = _StripeProvider as React.FC<StripeProviderProps>;
 
 
 
@@ -56,13 +55,18 @@ const switchNavigator = createStackNavigator({
         RestaurantPage: RestaurantScreen,
         FoodDetailPage: FoodDetailScreen,
         LocationPage: LocationScreen
+        
+      }, {
+        defaultNavigationOptions: {
+        headerShown: false
+        }
       }),
       navigationOptions: {
         tabBarIcon: ({ focused, tintColor }) => {
           let icon = focused == true ? require('./src/images/home_icon.png') : require('./src/images/home_n_icon.png');
           return <Image source={icon} style={styles.tabIcon} />
         }
-      }
+      },
     },
 
     // offer Icon
@@ -127,16 +131,16 @@ const switchNavigator = createStackNavigator({
   })
 });
 
-interface AppProps {
-  props: any
-}
+// interface AppProps {
+//   props: any
+// }
 
 const AppNavigation = createAppContainer(switchNavigator);
 
-export default function App(): JSX.Element | any {
+export default function App(): JSX.Element | null {
   return (
  <>
-      <Provider store={store}>
+      {/* <Provider store={store}>
       <StripeProvider
         publishableKey= {PUBLISHABLE_KEY}
         merchantIdentifier='com.kayzmann.online_store_app'
@@ -146,8 +150,11 @@ export default function App(): JSX.Element | any {
 
         }}
       >
-        {/* <AppNavigation /> */}
+        <AppNavigation />
         </StripeProvider>
+      </Provider> */}
+      <Provider store={store}>
+        <AppNavigation />
       </Provider>
    </>
 

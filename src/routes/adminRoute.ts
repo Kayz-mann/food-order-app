@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.post('/vendor', createVendor);
 router.get('/vendor', getVendors);
-router.post('/vendor/:id', getVendorById);
+router.get('/vendor/:id', getVendorById);
 
 router.get('/transactions', getTransactions);
 router.get('/transaction/:id', getTransactionById);

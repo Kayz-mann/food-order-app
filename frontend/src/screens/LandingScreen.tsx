@@ -7,6 +7,8 @@ import React from 'react';
 import { UserState } from '../redux/model';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { onUpdateLocation } from '../redux/actions';
+import { connect } from 'react-redux';
+import { ApplicationState } from '../redux/reducers';
 
 // const screenWidth = Dimensions.get('screen').width;
 
@@ -15,7 +17,7 @@ interface LandingProps{
     onUpdateLocation: Function,
 }
 
-const LandingScreen: React.FC<LandingProps> = (props) => {
+const _LandingScreen: React.FC<LandingProps> = (props) => {
     const [errorMsg, setErrorMsg] = useState('');
     const [address, setAddress] = useState<Location.LocationGeocodedAddress>();
     const [displayAddress, setDisplayAddress] = useState('Waiting for current location');
@@ -127,33 +129,42 @@ const LandingScreen: React.FC<LandingProps> = (props) => {
     );
 }
 
-export default LandingScreen;
+const mapStateToProps = (state: ApplicationState) => ({
+    userReducer: state.userReducer
+  })
+  
+const LandingScreen = connect(mapStateToProps, { onUpdateLocation })(_LandingScreen);
+
+export { LandingScreen };
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'rgba(242,242,242,17)'
-    },
-
-    navigation: {
-        flex: 2,
-        backgroundColor: 'red'
-    },
-    
-    body: {
-        flex: 0,
+        backgroundColor: 'rgba(242,242,242,17)',
         justifyContent: 'center',
         alignItems: 'center',
     },
 
+    navigation: {
+        flex: 2,
+
+    },
+    
+    body: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 100
+    },
+
     footer: {
         flex: 1,
-        backgroundColor: 'cyan'
+ 
     },
 
     deliveryIcon: {
-        width: 120,
-        height: 120
+        width: 80,
+        height: 80
     },
 
     addressContainer: {
@@ -166,13 +177,13 @@ const styles = StyleSheet.create({
     },
 
     addressTitle: {
-        fontSize: 22,
-        fontWeight: '700',
+        fontSize: 14,
+        fontWeight: '500',
         color: '#707070'
     },
 
     addressText: {
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: '200',
         color: '#474747'
     }

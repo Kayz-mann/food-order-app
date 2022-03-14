@@ -14,9 +14,9 @@ const SearchBar: React.FC<SearchBarProps> = ({ onEndEditing, didTouch, autoFocus
     return (
         <View style={styles.container}>
             <View style={styles.searchBar}>
-                <Image style={{ width: 25, height: 25 }} source={require('../images/search.png')} />
+                <Image style={{ width: 15, height: 15 }} source={require('../images/search.png')} />
                 <TextInput
-                    style={{ marginLeft: 5, flex: 9, fontSize: 20, height: 42 }}
+                    style={{ marginLeft: 5, flex: 9, fontSize: 15, height: 42 }}
                     placeholder='Search Foods'
                     autoFocus={autoFocus}
                     onTouchStart={didTouch}
@@ -34,14 +34,13 @@ const SearchBar: React.FC<SearchBarProps> = ({ onEndEditing, didTouch, autoFocus
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'green',
         height: 60,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignContent: 'center',
         alignItems: 'center',
-        paddingLeft: 20,
-        paddingRight: 20
+        paddingLeft: 10,
+        paddingRight: 10
     },
     searchBar: {
         height: 32,

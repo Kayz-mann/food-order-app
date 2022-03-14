@@ -75,7 +75,7 @@ const _AccountScreen: React.FC<AccountScreenProps> = (props) => {
             <TouchableOpacity
                 style={{
                     backgroundColor: '#fff',
-                    height: 80,
+                    height: 70,
                     justifyContent: 'space-around',
                     flexDirection: 'row',
                     alignItems: 'center',
@@ -84,13 +84,15 @@ const _AccountScreen: React.FC<AccountScreenProps> = (props) => {
                     paddingRight: 20,
                     borderTopColor: '#d3d3d3',
                     borderBottomColor: '#d3d3d3',
+                    borderRadius: 20,
                     borderTopWidth: 0.5,
                     borderBottomWidth: 0.5,
+                    marginBottom: 5
                 }}
                 key={title}
                 onPress={() => action()}>
                 <Text style={{ flex: 1, fontSize: 18, color: '#525252' }}>{title}</Text>
-                    <Image source={require('../images/arrow_icon.png')} style={{ width: 40, height: 40  }} />
+                    <Image source={require('../images/arrow_icon.png')} style={{ width: 20, height: 20  }} />
             </TouchableOpacity>
         )
     }
@@ -100,8 +102,8 @@ const _AccountScreen: React.FC<AccountScreenProps> = (props) => {
         return (
             <View style={styles.container}>
                <View style={styles.navigation}>
-                    <View style={{ display: 'flex', height: 60, justifyContent: 'space-around', flexDirection: 'row', alignItems: 'center', marginLeft: 4,paddingLeft: 20, paddingRight: 20 }}>
-                        <Image source={require('../images/avatar.png')} style={{ width: 150, height: 150, marginRight: 20 }} />
+                    <View style={{ height: 60, justifyContent: 'flex-start', alignItems: 'center', paddingLeft: 20, paddingRight: 20, flexDirection: 'row' }}>
+                        <Image source={require('../images/avatar.png')} style={{ width: 80, height: 80 }} />
                         <View>
                             <Text style={{ fontSize: 22, fontWeight: '600'}}>{user.firstName || 'Guest'}</Text>
                             <Text style={{ fontSize: 18 }}>{user.email}</Text>
@@ -129,20 +131,17 @@ const _AccountScreen: React.FC<AccountScreenProps> = (props) => {
 const styles = StyleSheet.create({
     container: {
         flex: 3,
-        marginTop: 44,
+        marginTop: 10,
         padding: 10,
-        flexDirection: 'row',
-        justifyContent: 'flex-start',
-        alignItems: 'center'
         
     },
     navigation: {
         flex: 1,
-        marginTop: 43,
+        marginTop: 20,
     },
     body: {
-        flex: 10,
-        display: 'flex',
+        flex: 3,
+   
     },
     footer: {
         flex: 2,

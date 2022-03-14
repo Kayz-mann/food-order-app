@@ -28,10 +28,8 @@ const styles = StyleSheet.create({
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#f14b5d',
-        width: 40,
-        height: 50,
-        marginTop: 20,
+        width: 20,
+        height: 20,
         borderRadius: 30,
         alignSelf: 'center'
     }

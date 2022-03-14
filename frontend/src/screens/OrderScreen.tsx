@@ -41,11 +41,11 @@ const _OrderScreen: React.FC<OrderScreenProps> = (props) => {
         return (
             <View style={styles.container}>
                 <View style={styles.navigation}>
-                    <View style={{ display: 'flex', height: 60, justifyContent: 'flex-start', flexDirection: 'row', alignItems: 'center', marginLeft: 4, paddingLeft: 20, paddingRight: 20 }}>
+                    <View style={{ display: 'flex', height: 60, justifyContent: 'flex-start', flexDirection: 'row', alignItems: 'center', marginLeft: 4, width: '100%' }}>
                         <ButtonWithIcon icon={require('../images/back_arrow.png')}
                             onTap={() => goBack()}
-                            width={32} height={38}
-                        ></ButtonWithIcon>
+                            width={22} height={18}
+                        />
                         <Text style={{ fontSize: 22, fontWeight: '600' }}>Orders</Text>
                     </View>
                 </View>

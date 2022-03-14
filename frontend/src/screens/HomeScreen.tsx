@@ -45,20 +45,20 @@ const _HomeScreen: React.FC<HomeProps> = (props) => {
     return (
         <View style={styles.container}>
             <View style={styles.navigation}>
-                <View style={{ marginTop: 50, flex: 4, backgroundColor: 'white', paddingLeft: 30, paddingRight: 20, alignItems: 'center', justifyContent: 'flex-start' }}>
+                <View style={{ marginTop: 20, paddingLeft: 30, paddingRight: 20, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row' }}>
                     <Image source={require('../images/delivery_icon.png')} style={{ width: 32, height: 32 }} />
-                    {/* <Text>{`${location.name}, ${location.street}, ${location.city}`}</Text> */}
-                    <Text style={{ width: 280, marginRight: 5  }}>{`${location.displayAddress}`}</Text>
-                    <ButtonWithIcon onTap={() => {navigate('LocationPage')}} icon={require('../images/edit_icon.png')} width={24} height={40} />
+                    <Text>{`${location.name}, ${location.street}, ${location.city}`}</Text>
+                    {/* <Text style={{ width: 280, marginRight: 5  }}>{`${location.displayAddress}`}</Text> */}
+                    <ButtonWithIcon onTap={() => {navigate('LocationPage')}} icon={require('../images/edit_icon.png')} width={24} height={24} />
                 </View>
-                <View style={{ height: 60, justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', paddingLeft: 4 }}>
+                <View style={{ height: 60, justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', padding: 10 }}>
                 <SearchBar
                     didTouch={() => {
                        navigate('SearchPage')
                     }}
                         onTextChange={() => { }}
                     />
-                    <ButtonWithIcon onTap={() => { } } icon={require('../images/hambar.png')} width={50} height={40} />
+                    <ButtonWithIcon onTap={() => { } } icon={require('../images/hambar.png')} width={28} height={28} />
                 </View>
             </View>
             <View style={styles.body}>
@@ -71,7 +71,7 @@ const _HomeScreen: React.FC<HomeProps> = (props) => {
                         keyExtractor={(item) => `${item.id}`}
                     />
                     <View>
-                        <Text style={{ fontSize: 25, fontWeight: '600', color: '#f1fbfd', marginLeft: 20 }}>
+                        <Text style={{ fontSize: 25, fontWeight: '600', color: 'orange', justifyContent: 'flex-start' }}>
                             Top Restaurants
                         </Text>
                     </View>
@@ -83,7 +83,7 @@ const _HomeScreen: React.FC<HomeProps> = (props) => {
                         keyExtractor={(item) => `${item._id}`}
                     />
                      <View>
-                        <Text style={{ fontSize: 25, fontWeight: '600', color: '#f1fbfd', marginLeft: 20 }}>
+                        <Text style={{ fontSize: 25, fontWeight: '600', color: 'orange'}}>
                             30 Minutes Food
                         </Text>
                     </View>
@@ -113,19 +113,20 @@ export { HomeScreen };
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'green'
+
     },
 
     navigation: {
-        flex: 2,
-        backgroundColor: 'red'
+        // flex: 2,
+
     },
     
     body: {
-        flex: 0,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'yellow'
+        // flex: 0,
+        // justifyContent: 'center',
+        // alignItems: 'center',
+        padding: 20
+
     },
 
     footer: {

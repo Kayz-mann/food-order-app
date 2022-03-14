@@ -84,7 +84,7 @@ const _OfferScreen: React.FC<OfferScreenProps> = ({ userReducer, shoppingReducer
         <View style={styles.container}>
             <View style={styles.navigation}>
                 <View style={{ display: 'flex', height: 60, justifyContent: 'center', flexDirection: 'row', alignItems: 'center', marginLeft: 4, paddingLeft: 20, paddingRight: 20 }}>
-                    <Text style={{ fontSize: 22, fontWeight: '600'}}>Offers & Deals</Text>
+                    <Text style={{ fontSize: 22, fontWeight: '600', color: 'orange'}}>Offers & Deals</Text>
                </View>
             </View>
             <View style={styles.body}>
@@ -126,10 +126,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         
     },
-    footer: {
-        flex: 1,
-        // backgroundColor: 'cyan'
-    }
 
 })
 

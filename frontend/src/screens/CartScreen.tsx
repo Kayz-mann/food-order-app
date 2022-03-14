@@ -252,17 +252,17 @@ const _CartScreen: React.FC<CartScreenProps> = (props) => {
         return (
             <View style={styles.container}>
                 <View style={styles.navigation}>
-                    <View style={{ display: 'flex', height: 60, justifyContent: 'space-around', flexDirection: 'row', alignItems: 'center', marginLeft: 4, paddingLeft: 20, paddingRight: 20 }}>
+                    <View style={{ height: 60, justifyContent: 'space-between', flexDirection: 'row' }}>
                         <Text style={{ fontSize: 18, fontWeight: '600' }}>My Cart</Text>
                         {user.token !== undefined &&
                             <TouchableOpacity
-                                style={{ alignItems: 'center' }}
+                                // style={{ alignItems: 'center' }}
                                 onPress={() => {
                                     // go to the order details page
                                     navigate('OrderPage')
                                 }}
                             >
-                                <Image source={require('../images/orders.png')} style={{ width: 50, height: 50 }} />
+                                <Image source={require('../images/orders.png')} style={{ width: 25, height: 25}} />
                             </TouchableOpacity>
                         }
                     </View>
@@ -378,7 +378,8 @@ const styles = StyleSheet.create({
     },
     navigation: {
         flex: 1,
-        marginTop: 43,
+        // marginTop: 43,
+        width: '100%'
     },
     body: {
         flex: 10,
@@ -461,5 +462,5 @@ export { CartScreen };
 
 
 
-// 8:23 
+
 
