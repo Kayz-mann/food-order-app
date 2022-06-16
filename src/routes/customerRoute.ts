@@ -12,7 +12,7 @@ router.post('/signup', customerSignUp);
 router.post('/login', customerLogin);
 
 // authentication
-// router.use(authenticate);
+router.use(authenticate);
 
 // Verify Customer Account
 router.patch('/verify', customerVerify);
