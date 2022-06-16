@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StyleSheet, TouchableOpacity, Text, Dimensions } from 'react-native';
 
 import { FoodModel } from '../redux/model';
-import AddRemove from '../components/Button/AddRemove';
+import AddRemove from './AddRemove';
 
 
 interface FoodCardInfoProps{

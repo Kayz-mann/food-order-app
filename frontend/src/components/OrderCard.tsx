@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StyleSheet, TouchableOpacity, Text, Dimensions, Image } from 'react-native';
 
 import { FoodModel, OrderModel } from '../redux/model';
-import AddRemove from '../components/Button/AddRemove';
+import AddRemove from './AddRemove';
 import moment from 'moment';
 
 
