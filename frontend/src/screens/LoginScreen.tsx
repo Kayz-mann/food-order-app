@@ -117,7 +117,7 @@ const _LoginScreen: React.FC<LoginProps> = ({ onUserLogin, onUserSignup, userRed
               <Text style={{ fontSize: 16, padding: 10, marginBottom: 20, color: '#716f6f'}}>
                     Enter your OTP
               </Text>
-              <TextField isOTP={true} placeholder="OTP" onTextChange={() => {}} />
+              <TextField isOTP={true} placeholder="OTP" onTextChange={setOtp} />
               <ButtonWithTitle title="Verify OTP" onTap={onTapVerify} width={340} height={50} />
               <ButtonWithTitle onTap={onTapRequestNewOTP} disable={!canRequestOtp} title={requestOtpTitle} isNoBg={true} width={430} height={50} />
            </View>

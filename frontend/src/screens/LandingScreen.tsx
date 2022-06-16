@@ -19,7 +19,7 @@ interface LandingProps{
 
 const _LandingScreen: React.FC<LandingProps> = (props) => {
     const [errorMsg, setErrorMsg] = useState('');
-    const [address, setAddress] = useState<Location.LocationGeocodedAddress>();
+    const [address, setAddress] = useState<Location.Address>();
     const [displayAddress, setDisplayAddress] = useState('Waiting for current location');
     const { navigate } = useNavigation();
     const { userReducer, onUpdateLocation } = props;
@@ -42,7 +42,7 @@ const _LandingScreen: React.FC<LandingProps> = (props) => {
 
     const accessDeviceLocation = async () => {
         try {
-            let { status }: any = await Location.requestForegroundPermissionsAsync();
+            let { status }: any = await Location.requestPermissionsAsync();
     
             if (status !== 'granted') {
                 showAlert('Location Permission Needed!', 'Location Permission needed to access your nearest restaurants!');

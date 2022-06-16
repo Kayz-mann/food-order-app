@@ -12,10 +12,10 @@ export interface CustomerDoc extends Document{
     verified: boolean;
     otp: number;
     otp_expiry: Date;
-    lat: number;
-    lng: number;
-    orders: [OrderDoc],
-    cart: []
+    lat?: number;
+    lng?: number;
+    orders?: [OrderDoc],
+    cart?: []
 }
 
 const CustomerSchema = new Schema({

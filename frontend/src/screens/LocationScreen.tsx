@@ -89,8 +89,8 @@ const _LocationScreen: React.FC<LocationProps> = (props) => {
         console.log(location, 'Receiving Location from pick Location')
         
         setRegion({
-            latitude: 26.90,
-            longitude: 93.701,
+            latitude: location.lat,
+            longitude: location.lng,
             longitudeDelta: 0.0421,
             latitudeDelta: 0.0922
         })
@@ -116,10 +116,12 @@ const _LocationScreen: React.FC<LocationProps> = (props) => {
     const pickLocationView = () => {
         return (
             <View style={styles.container}>
-                <View style={{ flex: 1, display: 'flex', justifyContent: 'flex-start', flexDirection: 'row', marginTop: 44, marginLeft: 5 }}>
+                <View style={{ flexDirection: 'row', marginTop: 44,  alignItems: 'center' }}>
+                    <View style={{ alignItems: 'center',  }}>
                     <ButtonWithIcon icon={require('../images/back_arrow.png')} onTap={() => navigate('HomePage')}
-                        width={40} height={50} />
-                    <View style={{ display: 'flex', flex: 1, marginRight: 5 }}>
+                        width={15} height={15} />
+                    </View>
+                    <View style={{ flex: 1, marginRight: 5 }}>
                         <LocationPicker onChangeLocation={onChangeLocation} />
                     </View>
                 </View>
@@ -186,7 +188,7 @@ const styles = StyleSheet.create({
     },
     
     body: {
-        flex: 7.5,
+        flex: 1
     },
 
     footer: {
@@ -194,16 +196,15 @@ const styles = StyleSheet.create({
         backgroundColor: 'cyan'
     },
     centerMsg: {
-        left: '50%',
-        top: '50%',
-        position: 'absolute',
-        marginLeft: -80,
-        marginTop: -50
+
+        alignItems: 'center',
+        marginTop: 150,
+
     },
 
     deliveryIcon: {
-        width: 120,
-        height: 120
+        width: 100,
+        height: 100
     },
 
     addressContainer: {
@@ -216,7 +217,7 @@ const styles = StyleSheet.create({
     },
 
     addressTitle: {
-        fontSize: 22,
+        fontSize: 18,
         fontWeight: '700',
         color: '#707070'
     },

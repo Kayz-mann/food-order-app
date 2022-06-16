@@ -22,6 +22,7 @@ export const customerSignUp = async (req: Request, res: Response, next: NextFunc
     const customerInputs = plainToClass(CreateCustomerInputs, req.body);
     const inputErrors = await validate(customerInputs, { validationError: { target: true } });
     if (inputErrors.length > 0) {
+        
         return res.status(400).json(inputErrors);
     }
 
@@ -69,6 +70,7 @@ export const customerSignUp = async (req: Request, res: Response, next: NextFunc
         return res.status(201).json({ signature: signature, verified: result.verified, email: result.email })
     }
     return res.status(400).json({ message: 'Error with Signup' });
+    
 };
 
 export const customerLogin = async (req: Request, res: Response, next: NextFunction) => {

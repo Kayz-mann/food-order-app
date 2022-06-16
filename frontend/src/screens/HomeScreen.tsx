@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Text, FlatList, ScrollView, Image } from 'react-native';
 
 import SearchBar from '../components/SearchBar';
@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
 import { onAvailability, onSearchFoods } from '../redux/actions/shoppingActions';
 
 
+
 interface HomeProps{
     userReducer: UserState,
     shoppingReducer: ShoppingState,
@@ -20,7 +21,6 @@ interface HomeProps{
 }
 
 const _HomeScreen: React.FC<HomeProps> = (props) => {
-
     const { navigate } = useNavigation();
     const { location } = props.userReducer;
     const { availability } = props.shoppingReducer;

@@ -9,7 +9,7 @@ interface LocationPickProps {
 
 const LocationPicker: React.FC<LocationPickProps> = ({ onChangeLocation }) => {
     return (
-        <View>
+        <View style={styles.container}>
             <GooglePlacesAutocomplete
                 minLength={4}
                 placeholder="Search Your Address"
@@ -24,6 +24,7 @@ const LocationPicker: React.FC<LocationPickProps> = ({ onChangeLocation }) => {
                     key: MAP_API_KEY,
                     location: 'en'
                 }}
+                nearbyPlacesAPI='GooglePlacesSearch'
                 debounce={300}
             
             />

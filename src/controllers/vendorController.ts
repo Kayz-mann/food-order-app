@@ -135,7 +135,7 @@ export const addFood = async (req: Request, res: Response, next: NextFunction) =
     
 }
 
-export const getFoods= async (req: Request, res: Response, next: NextFunction) => {
+export const getFoods = async (req: Request, res: Response, next: NextFunction) => {
     const user = req.user;
     if (user) {
        
