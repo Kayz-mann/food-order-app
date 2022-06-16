@@ -1,6 +1,6 @@
 // import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { Image, StyleSheet, View } from 'react-native';
+import { Image, StyleSheet  } from 'react-native';
 import { createAppContainer} from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
